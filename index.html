@@ -1,0 +1,1340 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0;background:#fff}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Créditos CHN-4</title>
+<meta name="description" content="Acompanhamento dos créditos do Centro de Hidrografia e Navegação do Norte — posição orçamentária do exercício.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* ───────────────────────────── tokens ───────────────────────────── */
+:root{
+  --plane:#ffffff;      --surface:#ffffff;    --surface-2:#f4faf7;
+  --ink:#10241d;        --ink-2:#3e6459;      --muted:#7d968e;
+  --hair:#cfe6db;       --hair-soft:#e2efe9;  --grid:#e7f2ec;
+  --accent:#0f7a5a;     --accent-soft:#e6f4ee;
+  --track:#e7f2ec;      --total:#cfe6db;      --disp:#6fc4a4;
+  --stage-1:#2f9f79;    --stage-2:#0f7a5a;    --stage-3:#08523d;
+  --pontos:#d9ebe3;
+  --s-good:#0ca30c;     --s-warn:#fab219;     --s-serious:#ec835a;  --s-crit:#d03b3b;
+  --s-good-ink:#006300; --s-warn-ink:#8a5c00; --s-crit-ink:#a52222;
+  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300;
+  --c7:#4a3aa7; --c8:#e34948;
+  --shadow:0 1px 2px rgba(10,87,65,.05), 0 8px 22px -18px rgba(10,87,65,.22);
+  --ring:rgba(10,87,65,.12);
+  /* o painel é claro em qualquer tema do leitor, inclusive nos controles do sistema */
+  color-scheme:light;
+}
+
+/* ───────────────────────────── base ───────────────────────────── */
+*{box-sizing:border-box}
+html,body{background:var(--plane)}
+body{
+  margin:0; color:var(--ink);
+  font-family:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1200px; margin:0 auto; padding-inline:18px; padding-block:0 56px}
+h1,h2,h3{margin:0; font-family:"Archivo Narrow","IBM Plex Sans",sans-serif; text-wrap:balance}
+.num{font-variant-numeric:tabular-nums}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+
+/* ───────────────────────────── header ───────────────────────────── */
+.topbar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:20;
+  background:color-mix(in srgb, var(--plane) 92%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--hair);
+}
+.topbar::after{
+  content:""; display:block; height:3px;
+  background:repeating-linear-gradient(90deg, var(--accent) 0 11px, transparent 11px 22px);
+}
+.topbar-in{max-width:1200px; margin:0 auto; padding:12px 18px; display:flex; flex-wrap:wrap; gap:14px 20px; align-items:center}
+.brand{display:flex; align-items:center; gap:12px; min-width:0}
+.crest{
+  flex:none; width:44px; height:44px; border-radius:50%;
+  background:#ffffff; display:grid; place-items:center;
+  box-shadow:0 0 0 2px var(--accent);
+}
+.crest img{width:30px; height:30px; object-fit:contain; display:block}
+.brand-txt{min-width:0}
+.brand-txt h1{font-size:19px; font-weight:700; letter-spacing:.005em; line-height:1.15}
+.brand-txt p{margin:1px 0 0; font-size:11px; color:var(--muted); font-family:"IBM Plex Mono",monospace}
+.topbar-right{margin-left:auto; display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px}
+.stamp{font-size:11.5px; color:var(--muted); line-height:1.35}
+.stamp b{display:block; color:var(--accent); font-weight:500; font-size:12px; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace}
+.tabs{display:flex; gap:2px; padding:3px; background:var(--surface-2); border:1px solid var(--hair); border-radius:9px}
+.tabs button{
+  border:0; background:transparent; padding:6px 13px; border-radius:6px;
+  font-family:"Archivo Narrow",sans-serif; font-weight:600; font-size:14px;
+  letter-spacing:.03em; text-transform:uppercase; color:var(--muted);
+}
+.tabs button[aria-selected="true"]{background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(12,26,38,.08)}
+
+/* ───────────────────────────── sections ───────────────────────────── */
+.sec{margin-top:34px}
+.sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap}
+.eyebrow{
+  font-family:"Archivo Narrow",sans-serif; font-weight:600; font-size:12px;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--accent);
+}
+.sec-head h2{font-size:21px; font-weight:600; letter-spacing:.005em}
+.sec-head .note{font-size:12.5px; color:var(--muted); margin-left:auto}
+.rule{height:1px; background:var(--hair); margin:6px 0 16px}
+
+.card{background:var(--surface); border:1px solid var(--hair); border-radius:12px; box-shadow:var(--shadow)}
+.card-pad{padding:18px}
+.card-h{
+  padding:14px 18px; border-bottom:1px solid var(--hair-soft);
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+}
+.card-h h3{font-size:16px; font-weight:600}
+.card-h .sub{font-size:12px; color:var(--muted); margin-left:auto}
+
+/* ───────────────────────────── tiles ───────────────────────────── */
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(196px,1fr)); gap:1px; background:var(--hair);
+  border:1px solid var(--hair); border-radius:12px; overflow:hidden; box-shadow:var(--shadow)}
+.tile{background:var(--surface); padding:16px 15px 18px; min-width:0}
+.tile .k{font-size:11.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.tile .v{font-family:"IBM Plex Mono",monospace; margin-top:7px; font-size:18px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1.12}
+.tile.lead .v{font-size:19.5px}
+@media (min-width:800px){ .tiles{grid-template-columns:repeat(5,minmax(0,1fr))} }
+.tile .m{margin-top:5px; font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+.tile .m .dim{color:var(--muted)}
+
+/* ───────────────────────────── meters ───────────────────────────── */
+.meters{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px}
+.meter .mh{display:flex; align-items:baseline; gap:8px; margin-bottom:8px}
+.meter .mh .lbl{font-size:13px; font-weight:600}
+.meter .mh .pc{margin-left:auto; font-size:17px; font-weight:600; font-variant-numeric:tabular-nums}
+.meter-track{position:relative; height:12px; background:var(--track); border-radius:3px}
+.meter-fill{position:absolute; inset:0 auto 0 0; border-radius:3px 2px 2px 3px}
+.meter-goal{position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--ink-2); border-radius:1px}
+.meter-foot{margin-top:7px; display:flex; gap:8px; align-items:center; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums}
+.pill{
+  display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:999px;
+  font-size:11px; font-weight:600; letter-spacing:.02em; border:1px solid var(--ring);
+}
+.pill .dot{width:7px; height:7px; border-radius:50%; flex:none}
+.pill.good{color:var(--s-good-ink); background:color-mix(in srgb,var(--s-good) 12%,transparent)}
+.pill.warn{color:var(--s-warn-ink); background:color-mix(in srgb,var(--s-warn) 16%,transparent)}
+.pill.crit{color:var(--s-crit-ink); background:color-mix(in srgb,var(--s-crit) 12%,transparent)}
+.pill.neutral{color:var(--ink-2); background:var(--surface-2)}
+
+/* ───────────────────────────── alerts ───────────────────────────── */
+.alerts{display:grid; gap:1px; background:var(--hair); border:1px solid var(--hair); border-radius:12px; overflow:hidden}
+.alert{background:var(--surface); padding:13px 16px; display:flex; gap:12px; align-items:flex-start}
+.alert .stripe{width:3px; border-radius:2px; align-self:stretch; flex:none}
+.alert .body{min-width:0}
+.alert .t{font-size:13.5px; font-weight:600}
+.alert .d{font-size:12.5px; color:var(--ink-2); margin-top:2px}
+.alert .val{font-family:"IBM Plex Mono",monospace; margin-left:auto; flex:none; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap}
+
+/* ───────────────────────────── bar chart ───────────────────────────── */
+.chart{padding:18px}
+.axis{position:relative; height:16px; margin-left:var(--gut,0); border-bottom:1px solid var(--hair)}
+.axis span{position:absolute; top:0; transform:translateX(-50%); font-size:10.5px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+.axis span:first-child{transform:none}
+.axis span:last-child{transform:translateX(-100%)}
+.brow{display:grid; grid-template-columns:1fr; gap:6px; padding:11px 0; border-bottom:1px solid var(--hair-soft)}
+.brow:last-child{border-bottom:0}
+.brow.clickable{cursor:pointer; margin-inline:-8px; padding-inline:8px; border-radius:7px}
+.brow.clickable:hover{background:var(--surface-2)}
+.brow.on{background:var(--accent-soft)}
+.brow-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.brow-top .code{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); letter-spacing:-.01em}
+.brow-top .name{font-size:13.5px; font-weight:600}
+.brow-top .figs{margin-left:auto; display:flex; gap:14px; font-size:12px; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; color:var(--ink-2)}
+.brow-top .figs b{font-weight:600; color:var(--ink)}
+.plot{position:relative; height:26px; background:linear-gradient(var(--grid),var(--grid)) no-repeat; background-size:100% 1px; background-position:0 100%}
+.gridlines{position:absolute; inset:0; pointer-events:none}
+.gridlines i{position:absolute; top:0; bottom:0; width:1px; background:var(--grid)}
+.tr{position:absolute; left:0; top:2px; bottom:2px; background:var(--track); border-radius:3px}
+.b-emp{position:absolute; left:0; top:0; bottom:0; background:var(--stage-1); border-radius:3px 4px 4px 3px}
+.b-liq{position:absolute; left:0; bottom:0; height:9px; background:var(--stage-2); border-radius:0 3px 3px 0; box-shadow:0 -2px 0 var(--surface)}
+.b-pag{position:absolute; left:0; bottom:0; height:9px; background:var(--stage-3); border-radius:0 3px 3px 0}
+.goal{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--ink-2); opacity:.55; border-radius:1px}
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; padding:14px 18px 0; border-top:1px solid var(--hair-soft); margin-top:4px}
+.lg{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-2)}
+.lg i{width:12px; height:12px; border-radius:3px; flex:none; display:block}
+.lg i.line{width:2px; height:13px; border-radius:1px; background:var(--ink-2); opacity:.55}
+
+/* simple horizontal bars (ND, meios, andamento) */
+.hb{display:grid; gap:12px}
+.hb-row .hb-top{display:flex; align-items:baseline; gap:10px; margin-bottom:5px}
+.hb-row .hb-top .l{font-size:13px; font-weight:500}
+.hb-row .hb-top .l small{display:block; font-weight:400; font-size:11.5px; color:var(--muted)}
+.hb-row .hb-top .r{font-family:"IBM Plex Mono",monospace; margin-left:auto; font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap}
+.hb-row .hb-top .r em{font-style:normal; font-weight:400; color:var(--muted); margin-left:6px; font-size:12px}
+.hb-bar{height:14px; background:var(--track); border-radius:3px; overflow:hidden}
+.hb-bar i{display:block; height:100%; border-radius:3px}
+
+/* ───────────────────────────── tables ───────────────────────────── */
+.tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{border-collapse:collapse; width:100%; min-width:760px; font-size:12.5px}
+th,td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--hair-soft); vertical-align:top}
+th{
+  font-family:"Archivo Narrow",sans-serif; font-weight:600; font-size:12px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+  background:var(--surface-2); position:sticky; top:0; white-space:nowrap;
+}
+td.r,th.r{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+td.r{font-family:"IBM Plex Mono",monospace; font-size:11.5px}
+td.mono{font-family:"IBM Plex Mono",monospace; font-size:11.5px; white-space:pre-line}
+tbody tr:hover{background:var(--surface-2)}
+tr.stale td{opacity:.6}
+.desc{max-width:380px; min-width:200px}
+/* a tabela de metas acompanha a largura disponível — sem rolagem lateral */
+#tbl-dem{min-width:0}
+#tbl-dem .desc{min-width:0}
+#tbl-dem td,#tbl-dem th{padding:9px 8px}
+#tbl-dem th{white-space:normal}
+#tbl-dem td:first-child{overflow-wrap:anywhere}
+#tbl-dem td:first-child,#tbl-dem th:first-child{padding-left:14px}
+#tbl-dem td:last-child,#tbl-dem th:last-child{padding-right:14px}
+.chips{display:flex; flex-wrap:wrap; gap:7px; padding:14px 18px; border-bottom:1px solid var(--hair-soft)}
+.chip{
+  border:1px solid var(--hair); background:var(--surface); border-radius:999px;
+  padding:4px 11px; font-size:12px; color:var(--ink-2);
+}
+.chip[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600}
+.chip .n{opacity:.65; margin-left:5px; font-variant-numeric:tabular-nums}
+
+/* ───────────────────────────── forms ───────────────────────────── */
+.field{display:grid; gap:4px}
+.field label{font-size:11.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--muted)}
+input,select,textarea{
+  font:inherit; font-size:13px; color:var(--ink); background:var(--surface);
+  border:1px solid var(--hair); border-radius:7px; padding:7px 9px; width:100%;
+}
+input.num-in{text-align:right; font-variant-numeric:tabular-nums}
+textarea{min-height:62px; resize:vertical}
+.btn{
+  border:1px solid var(--hair); background:var(--surface); border-radius:8px;
+  padding:7px 14px; font-size:13px; font-weight:600;
+}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--s-crit-ink)}
+.btn:disabled{opacity:.5; cursor:not-allowed}
+.btn.sm{padding:4px 10px; font-size:12px}
+.formgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:13px}
+.formgrid .wide{grid-column:1/-1}
+.formfoot{display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-top:16px}
+.formfoot .msg{font-size:12.5px; color:var(--muted); margin-left:auto}
+.checklist{display:grid; gap:1px; background:var(--hair)}
+.ck{background:var(--surface); padding:13px 16px; display:flex; gap:12px; align-items:flex-start}
+.ck .body{min-width:0}
+.ck .t{font-size:13.5px; font-weight:600}
+.ck .d{font-size:12.5px; color:var(--ink-2); margin-top:3px}
+.ck .val{margin-left:auto; text-align:right; flex:none}
+.ck .val b{display:block; font-size:14px; font-variant-numeric:tabular-nums}
+.ck .val span{font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+
+.banner{
+  display:flex; gap:12px; align-items:flex-start; padding:13px 16px; border-radius:10px;
+  background:var(--surface); border:1px solid var(--hair); font-size:13px; color:var(--ink-2);
+  box-shadow:var(--shadow);
+}
+.banner b{color:var(--ink)}
+.skel{padding:56px 18px; text-align:center; color:var(--muted); font-size:13.5px}
+.foot{margin-top:40px; padding-top:18px; border-top:1px solid var(--hair); font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px 18px}
+
+.pair{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:18px; align-items:start}
+
+/* ── navegação de módulos ── */
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:0}
+.layout-main{min-width:0}
+.modnav{
+  display:flex; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  padding:14px 0 2px; margin-bottom:2px; scrollbar-width:thin;
+}
+.modnav button{
+  flex:none; border:1px dashed var(--hair); background:var(--surface); color:var(--ink-2);
+  border-radius:4px; padding:6px 13px; white-space:nowrap;
+  font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:400;
+}
+.modnav button:hover{background:var(--surface-2)}
+.modnav button[aria-current="true"]{
+  background:var(--accent-soft); border-style:solid; border-color:var(--accent);
+  color:var(--accent); font-weight:600;
+}
+.modnav .step{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; opacity:.6; margin-right:7px;
+}
+.modnav button[aria-current="true"] .step{opacity:.75}
+
+@media (min-width:900px){
+  .layout.com-nav{grid-template-columns:218px minmax(0,1fr); gap:34px; align-items:start}
+  .layout.com-nav .modnav{
+    position:sticky; top:calc(env(safe-area-inset-top,0px) + 84px);
+    flex-direction:column; gap:1px; overflow:visible; padding:26px 0 0; margin:0;
+  }
+  .layout.com-nav .modnav::before{
+    content:"Módulos"; font-family:"Archivo Narrow",sans-serif; font-weight:600;
+    font-size:11.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
+    padding:0 0 10px 13px;
+  }
+  .layout.com-nav .modnav button{
+    width:100%; text-align:left; white-space:normal; border:0; background:transparent;
+    border-radius:6px; padding:9px 12px 9px 13px; border-left:2px solid transparent;
+    font-family:"IBM Plex Mono",monospace; font-size:12.5px; line-height:1.35;
+  }
+  .layout.com-nav .modnav button:hover{background:var(--surface-2)}
+  .layout.com-nav .modnav button[aria-current="true"]{
+    background:var(--accent-soft); color:var(--accent); border-left-color:var(--accent); font-weight:600;
+  }
+  .layout.com-nav .modnav .step{opacity:.55; margin-right:9px}
+}
+
+/* ── gráfico de colunas (posição consolidada) ── */
+.cc{display:grid; grid-template-columns:auto minmax(0,1fr); gap:0 12px; padding-top:9px}
+.cc-y{position:relative; height:var(--h); width:78px; flex:none}
+.cc-y span{
+  position:absolute; right:0; transform:translateY(50%); white-space:nowrap;
+  font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--muted); font-variant-numeric:tabular-nums;
+}
+.cc-plot{
+  position:relative; height:var(--h); border-bottom:1px solid var(--hair);
+  background-image:radial-gradient(var(--pontos) 1px, transparent 1px);
+  background-size:14px 14px; background-position:0 100%;
+}
+.cc-plot i.gl{position:absolute; left:0; right:0; height:1px; background:var(--grid)}
+.cc-cols{position:absolute; inset:0; display:flex; gap:10px}
+.cc-col{position:relative; flex:1; min-width:0}
+.cc-bar{position:absolute; left:6%; right:6%; bottom:0; border-radius:5px 5px 0 0; min-height:2px}
+.cc-bar.total{box-shadow:inset 0 0 0 1px var(--hair)}
+.cc-desk{display:block}
+.cc-mob{display:none}
+@media (max-width:620px){
+  .cc-desk{display:none}
+  .cc-mob{display:block}
+}
+.cc-lab{
+  font-family:"IBM Plex Mono",monospace;
+  position:absolute; left:-4px; right:-4px; text-align:center; font-size:11px; font-weight:500;
+  font-variant-numeric:tabular-nums; line-height:1.2;
+}
+.cc-names{grid-column:2; display:flex; gap:10px; margin-top:9px}
+.cc-name{flex:1; min-width:0; text-align:center}
+.cc-name b{display:block; font-size:12.5px; font-weight:600; line-height:1.25; overflow-wrap:anywhere}
+.cc-name span{display:block; font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; margin-top:2px}
+.cc-note{grid-column:2; margin-top:12px; font-size:11.5px; color:var(--muted); line-height:1.5}
+
+/* ── gráficos de pizza ── */
+.pie-wrap{display:flex; flex-direction:column; align-items:center; gap:16px}
+.pie-svg{width:172px; height:172px; flex:none; display:block}
+.pie-leg{width:100%; min-width:0; display:grid; gap:9px}
+.pie-leg-row{
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:4px 10px;
+  align-items:baseline; font-size:12.5px;
+}
+.pie-leg-row i{width:10px; height:10px; border-radius:2px; align-self:center; flex:none}
+.pie-leg-row .nm{min-width:0; font-weight:500}
+.pie-leg-row .nm small{display:block; color:var(--muted); font-weight:400; font-size:10.5px; margin-top:1px}
+.pie-leg-row .vl{font-family:"IBM Plex Mono",monospace; font-size:11.5px; text-align:right; font-variant-numeric:tabular-nums; font-weight:500; white-space:nowrap}
+.pie-leg-row .vl em{font-style:normal; font-weight:400; color:var(--muted); margin-left:6px; font-size:11.5px}
+
+/* ── comentários ── */
+.com{display:grid; gap:12px}
+.com-item{
+  background:var(--surface); border:1px solid var(--hair); border-radius:8px;
+  padding:14px 16px; box-shadow:var(--shadow);
+}
+.com-item.tratado{opacity:.62}
+.com-h{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:7px}
+.com-autor{font-size:13px; font-weight:600}
+.com-data{font-size:11px; color:var(--muted); font-family:"IBM Plex Mono",monospace}
+.com-assunto{
+  font-size:11px; font-weight:600; padding:2px 9px; border-radius:999px;
+  background:var(--accent-soft); color:var(--accent); border:1px solid var(--hair);
+}
+.com-acoes{margin-left:auto; display:flex; gap:7px; flex-wrap:wrap}
+.com-texto{font-size:13.5px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere}
+.com-selo{
+  display:inline-flex; align-items:center; gap:5px; margin-top:9px;
+  font-size:11px; color:var(--s-good-ink); font-weight:600;
+}
+.com-vazio{
+  border:1px dashed var(--hair); border-radius:8px; padding:26px 18px;
+  text-align:center; color:var(--muted); font-size:13px;
+}
+.modnav .sino{
+  display:inline-block; min-width:17px; padding:0 5px; margin-left:7px;
+  border-radius:999px; background:var(--s-warn); color:#3d2a00;
+  font-size:10px; font-weight:700; text-align:center; line-height:16px;
+  font-family:"IBM Plex Sans",sans-serif;
+}
+
+/* ── caixa compacta: créditos sem metas definidas ── */
+.mini{max-width:640px; margin-top:16px}
+.mini .card-h{padding:12px 16px}
+.mini .card-h h3{font-size:14.5px}
+.mini-tot{margin-left:auto; display:flex; align-items:baseline; gap:7px; white-space:nowrap}
+.mini-tot b{font-family:"IBM Plex Mono",monospace; font-size:15px; font-weight:600; font-variant-numeric:tabular-nums}
+.mini-tot span{font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+.mini-list{padding:6px 16px 10px}
+.mini-row{
+  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5px 12px; align-items:baseline;
+  padding:8px 0; border-bottom:1px solid var(--hair-soft);
+}
+.mini-row:last-child{border-bottom:0}
+.mini-row .nm{font-size:12.5px; font-weight:500; min-width:0}
+.mini-row .nm small{
+  display:block; color:var(--muted); font-weight:400;
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; margin-top:1px;
+}
+.mini-row .vl{font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:500; font-variant-numeric:tabular-nums; text-align:right}
+.mini-row .vl em{font-style:normal; font-weight:400; color:var(--muted); margin-left:6px; font-size:11.5px}
+.mini-row .bar{grid-column:1/-1; height:4px; background:var(--track); border-radius:2px; overflow:hidden}
+.mini-row .bar i{display:block; height:100%; background:var(--s-warn); border-radius:2px}
+.mini-foot{padding:0 16px 14px; font-size:11.5px; color:var(--muted); line-height:1.5}
+
+@media (max-width:640px){
+  .brand-txt h1{font-size:17px}
+  .tile .v{font-size:22px} .tile.lead .v{font-size:24px}
+  .sec-head h2{font-size:19px}
+  .brow-top .figs{width:100%; margin-left:0}
+  .chart{padding:14px}
+}
+</style>
+</head>
+<body>
+
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="crest" id="crest" title="Hidrografia">
+        <img src="data:image/png;base64,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" alt="Bode Verde — Hidrografia da Marinha do Brasil">
+      </div>
+      <div class="brand-txt">
+        <h1 id="om-nome">Créditos CHN-4</h1>
+        <p id="om-sub">Divisão de Intendência</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="stamp">Leitura de<b id="stamp-data">—</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="boot" class="skel">Carregando a posição dos créditos…</div>
+
+  <div class="layout" id="layout">
+  <nav class="modnav" id="modnav" aria-label="Módulos do painel"></nav>
+  <div class="layout-main">
+
+  <!-- ══════════════════════════ PAINEL ══════════════════════════ -->
+  <main id="view-painel" hidden>
+
+    <section class="sec" data-mod="consolidado" style="margin-top:22px">
+      <div class="sec-head">
+        <span class="eyebrow">Exercício <span id="ex-1">—</span></span>
+        <h2>Posição consolidada</h2>
+        <span class="note" id="prazo-nota"></span>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <h3>Acompanhamento dos créditos</h3>
+          <span class="sub">Valores em reais (R$)</span>
+        </div>
+        <div class="card-pad">
+          <div class="cc-desk"><div class="cc" id="chart-consolidado"></div></div>
+          <div class="cc-mob"><div class="hb" id="chart-consolidado-mob"></div></div>
+        </div>
+      </div>
+      <div class="tiles" id="tiles" style="margin-top:18px"></div>
+
+      <div class="card mini" id="card-sem-metas" hidden>
+        <div class="card-h">
+          <h3>Sem metas definidas</h3>
+          <span class="mini-tot"><b id="sm-total">—</b><span id="sm-share"></span></span>
+        </div>
+        <div class="mini-list" id="sm-list"></div>
+        <div class="mini-foot" id="sm-foot"></div>
+      </div>
+    </section>
+
+    <section class="sec" data-mod="atencao" id="sec-alertas">
+      <div class="sec-head">
+        <span class="eyebrow">Atenção</span>
+        <h2>O que precisa de decisão</h2>
+      </div>
+      <div class="alerts" id="alerts"></div>
+    </section>
+
+    <section class="sec" data-mod="pi">
+      <div class="sec-head">
+        <span class="eyebrow">Distribuição orçamentária</span>
+        <h2>Execução por Plano Interno</h2>
+        <span class="note">Clique em um PI para filtrar as demandas</span>
+      </div>
+      <div class="card">
+        <div class="chart" id="chart-pi"></div>
+        <div class="legend" id="legend-pi"></div>
+      </div>
+    </section>
+
+    <section class="sec" data-mod="destinacao">
+      <div class="sec-head">
+        <span class="eyebrow">Destinação</span>
+        <h2>Para onde o crédito está indo</h2>
+      </div>
+      <div class="pair">
+        <div class="card">
+          <div class="card-h"><h3>Provisionado por plano interno</h3><span class="sub" id="pi-tot"></span></div>
+          <div class="card-pad"><div id="chart-pimag"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Manutenção Corrente por meio</h3><span class="sub" id="meios-tot"></span></div>
+          <div class="card-pad"><div id="chart-meios"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Por natureza de despesa</h3><span class="sub" id="nd-tot"></span></div>
+          <div class="card-pad"><div id="chart-nd"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-mod="andamento">
+      <div class="sec-head">
+        <span class="eyebrow">Andamento</span>
+        <h2>Situação das demandas</h2>
+      </div>
+      <div class="pair">
+        <div class="card">
+          <div class="card-h"><h3>Por fase do processo</h3><span class="sub" id="fase-tot"></span></div>
+          <div class="card-pad"><div class="hb" id="chart-fase"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Restos a pagar</h3><span class="sub" id="rp-tot"></span></div>
+          <div class="card-pad"><div class="hb" id="chart-rp"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-mod="demandas">
+      <div class="sec-head">
+        <span class="eyebrow">Detalhamento</span>
+        <h2>Metas de execução</h2>
+        <span class="note" id="dem-count"></span>
+      </div>
+      <div class="card">
+        <div class="chips" id="chips"></div>
+        <div class="tblwrap"><table id="tbl-dem"></table></div>
+      </div>
+    </section>
+
+    <div class="foot">
+      <span id="foot-gerente"></span>
+      <span id="foot-ug"></span>
+      <span>Fonte dos valores de execução: Tesouro Gerencial / SIAFI.</span>
+    </div>
+  </main>
+
+
+  </div>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* ───────────────────────────── helpers ───────────────────────────── */
+const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
+const BRL  = new Intl.NumberFormat("pt-BR", {style:"currency", currency:"BRL"});
+const BRL0 = new Intl.NumberFormat("pt-BR", {style:"currency", currency:"BRL", maximumFractionDigits:0});
+const NUM2 = new Intl.NumberFormat("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+const brl = v => BRL.format(v || 0);
+const brl0 = v => BRL0.format(v || 0);
+const pct = (v, d = 1) => (v * 100).toLocaleString("pt-BR", {minimumFractionDigits:d, maximumFractionDigits:d}) + "%";
+const safe = v => (typeof v === "number" && isFinite(v)) ? v : 0;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const dmy = iso => { if (!iso) return "—"; const d = new Date(iso.length <= 10 ? iso + "T12:00:00" : iso); return isNaN(d) ? "—" : d.toLocaleDateString("pt-BR"); };
+const dmyhm = iso => { if (!iso) return "—"; const d = new Date(iso.length <= 10 ? iso + "T12:00:00" : iso); return isNaN(d) ? "—" : d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"}); };
+
+/* "2026NE000239" → "239"; mantém o valor íntegro na base e no balão da linha */
+function neCurto(v) {
+  if (!v) return null;
+  const partes = String(v).split(/[\s;,/]+/).map(s => s.trim()).filter(Boolean).map(s => {
+    const m = s.match(/^\d{4}\s*NE\s*0*(\d+)$/i);
+    return m ? m[1] : s;
+  });
+  return partes.join("\n") || null;
+}
+
+const FASES = ["Sem informação","Previsto","Aguardando","Em análise","Enviado","Processada","Empenhado","Liquidado","Pago"];
+const FASE_PUB = {"Sem informação":"A classificar"};
+const faseLabel = f => FASE_PUB[f] || f;
+const SERIES = ["--c1","--c2","--c3","--c4","--c5","--c6"];
+/* ordem com o verde à frente, verificada para daltonismo nos dois temas */
+const SERIES8 = ["--c3","--c2","--c1","--c4","--c5","--c6","--c7","--c8"];
+
+/* ───────────────────────────── state ───────────────────────────── */
+const MODULOS = [
+  {id:"consolidado", nome:"Posição consolidada"},
+  {id:"pi",          nome:"Planos internos"},
+  {id:"demandas",    nome:"Metas de execução"},
+  {id:"destinacao",  nome:"Destinação"},
+  {id:"andamento",   nome:"Andamento"},
+  {id:"atencao",     nome:"Atenção"},
+];
+
+const S = {
+  db:null, canEdit:false, wrote:false,
+  config:null, pis:[], demandas:[], rp:[], comentarios:[],
+  user:null, meuId:null, nomes:{},
+  tab:"painel", mod:"consolidado", filtroPi:null, filtroFase:null, editId:null, ready:false,
+};
+try { const m = localStorage.getItem("chn4.mod"); if (m && MODULOS.some(x => x.id === m)) S.mod = m; } catch (e) {}
+
+function irPara(id) {
+  S.mod = id;
+  try { localStorage.setItem("chn4.mod", id); } catch (e) {}
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function renderModNav() {
+  const host = $("modnav");
+  if (host.childElementCount !== MODULOS.length) {
+    host.textContent = "";
+    MODULOS.forEach((m,i) => {
+      const b = el("button"); b.type = "button"; b.dataset.mod = m.id;
+      b.append(Object.assign(el("span","step"),{textContent:String(i+1).padStart(2,"0")}),
+               el("span",null,m.nome));
+      b.addEventListener("click", () => irPara(m.id));
+      host.append(b);
+    });
+  }
+  const abertos = S.comentarios.filter(c => !c.tratado).length;
+  [...host.children].forEach(b => {
+    b.setAttribute("aria-current", b.dataset.mod === S.mod ? "true" : "false");
+    const velho = b.querySelector(".sino");
+    if (velho) velho.remove();
+    if (b.dataset.mod === "comentarios" && abertos) {
+      const s = el("span","sino", String(abertos));
+      s.title = abertos === 1 ? "1 comentário em aberto" : abertos + " comentários em aberto";
+      b.append(s);
+    }
+  });
+  document.querySelectorAll("#view-painel .sec[data-mod]").forEach(sec => {
+    sec.hidden = sec.dataset.mod !== S.mod;
+  });
+  const noPainel = S.tab === "painel";
+  host.hidden = !noPainel;
+  $("layout").classList.toggle("com-nav", noPainel);
+  if (noPainel) {
+    const atual = host.querySelector('[aria-current="true"]');
+    if (atual && atual.scrollIntoView) atual.scrollIntoView({block:"nearest", inline:"nearest"});
+  }
+}
+
+/* ───────────────────────────── derive ───────────────────────────── */
+function derive() {
+  const pis = S.pis.slice().sort((a,b) => safe(b.provisionado) - safe(a.provisionado));
+  const ativas = S.demandas.filter(d => !d.excluida);
+  const excluidas = S.demandas.filter(d => d.excluida);
+
+  const T = f => pis.reduce((s,p) => s + safe(p[f]), 0);
+  const prov = T("provisionado"), emp = T("empenhado"), liq = T("liquidado"), pag = T("pago");
+  const saldo = prov - emp;
+
+  const byPi = new Map();
+  pis.forEach(p => byPi.set(p.pi, {alocado:0, semDestino:0, semInfo:0, n:0}));
+  const byFase = new Map(FASES.map(f => [f, {valor:0, n:0}]));
+  const byNd = new Map(), byUgrMnt = new Map();
+  let semDestino = 0, semInfo = 0, comSit = 0;
+
+  for (const d of ativas) {
+    const v = safe(d.valor);
+    const key = d.piPai || d.pi;
+    if (byPi.has(key)) { const o = byPi.get(key); o.alocado += v; o.n++; if (d.semDestino) o.semDestino += v; if (d.situacao === "Sem informação") o.semInfo += v; }
+    const f = FASES.includes(d.situacao) ? d.situacao : "Sem informação";
+    const fo = byFase.get(f); fo.valor += v; fo.n++;
+    if (d.nd) byNd.set(d.nd, safe(byNd.get(d.nd)) + v);
+    if (d.semDestino) semDestino += v;
+    if (f === "Sem informação") semInfo += v; else comSit += v;
+    if (key === "P4HNZZ002KX" && d.ugr && d.ugr !== "84510") byUgrMnt.set(d.ugr, safe(byUgrMnt.get(d.ugr)) + v);
+  }
+
+  pis.forEach(p => { const o = byPi.get(p.pi) || {alocado:0,semDestino:0,semInfo:0,n:0}; Object.assign(p, o, {saldo: safe(p.provisionado) - safe(p.empenhado)}); });
+
+  // planos internos que o painel apresenta juntos (ex.: as três Sobras Lícitas)
+  const gDe = new Map();
+  const gidx = new Map();
+  const grupos = [];
+  for (const p of pis) {
+    const gid = p.grupo || p.pi;
+    gDe.set(p.pi, gid);
+    let g = gidx.get(gid);
+    if (!g) {
+      g = {id:gid, nome:p.grupo || p.descricao, pis:[], provisionado:0, empenhado:0,
+           liquidado:0, pago:0, alocado:0, semDestino:0, semInfo:0, n:0};
+      gidx.set(gid, g); grupos.push(g);
+    }
+    g.pis.push(p.pi);
+    for (const f of ["provisionado","empenhado","liquidado","pago","alocado","semDestino","semInfo","n"]) g[f] += safe(p[f]);
+  }
+  grupos.forEach(g => { g.saldo = g.provisionado - g.empenhado; });
+  grupos.sort((a,b) => b.provisionado - a.provisionado);
+
+  // distribuição da Manutenção Corrente: o residual fica com a própria CHN-4
+  const mnt = pis.find(p => p.pi === "P4HNZZ002KX");
+  const meios = [];
+  if (mnt) {
+    const somaMeios = [...byUgrMnt.values()].reduce((a,b) => a + b, 0);
+    meios.push({ugr:"84510", valor: safe(mnt.provisionado) - somaMeios});
+    ["84513","84514","84515","84516"].forEach(u => { if (byUgrMnt.has(u)) meios.push({ugr:u, valor:byUgrMnt.get(u)}); });
+    byUgrMnt.forEach((v,u) => { if (!meios.some(m => m.ugr === u)) meios.push({ugr:u, valor:v}); });
+  }
+
+  const empMarcado = byFase.get("Empenhado").valor + byFase.get("Liquidado").valor + byFase.get("Pago").valor;
+  const ex = (S.config && S.config.exercicio) || new Date().getFullYear();
+  const alvo = new Date(ex, 8, 30);
+  const hoje = new Date();
+  const dias = Math.round((alvo - new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) / 86400000);
+
+  return {
+    pis, grupos, gDe, ativas, excluidas, prov, emp, liq, pag, saldo,
+    semDestino, semInfo, comSit, empMarcado,
+    byFase, byNd, meios, dias,
+    nTotal: ativas.length,
+    nComSit: ativas.filter(d => d.situacao && d.situacao !== "Sem informação").length,
+    metas: (S.config && S.config.metas) || {empenhado:.8, liquidado:.7, pago:.6},
+  };
+}
+
+/* ───────────────────────────── painel: tiles ───────────────────────────── */
+/* as cinco séries do acompanhamento, na ordem da planilha */
+function series(D) {
+  const p = D.prov || 0;
+  return [
+    {k:"Provisionado", v:D.prov,  cor:"var(--total)",   m:`${D.pis.length} planos internos`},
+    {k:"Disponível",   v:D.saldo, cor:"var(--disp)",    m:"ainda por comprometer"},
+    {k:"Empenhado",    v:D.emp,   cor:"var(--stage-1)", m:"do provisionado"},
+    {k:"Liquidado",    v:D.liq,   cor:"var(--stage-2)", m:"do provisionado"},
+    {k:"Pago",         v:D.pag,   cor:"var(--stage-3)", m:"do provisionado"},
+  ].map(s => ({...s, share: p ? safe(s.v) / p : 0}));
+}
+
+function renderTiles(D) {
+  const host = $("tiles"); host.textContent = "";
+  for (const s of series(D)) {
+    const lead = s.k === "Provisionado" || s.k === "Disponível";
+    const n = el("div", "tile" + (lead ? " lead" : ""));
+    n.append(el("div","k",s.k), el("div","v",brl0(s.v)));
+    const m = el("div","m");
+    m.append(el("span","dim", s.k === "Provisionado" ? s.m : `${pct(s.share)} ${s.m}`));
+    n.append(m);
+    host.append(n);
+  }
+  const p = $("prazo-nota");
+  p.textContent = D.dias >= 0
+    ? `Faltam ${D.dias} ${D.dias === 1 ? "dia" : "dias"} para 30SET`
+    : `30SET encerrado há ${Math.abs(D.dias)} dias`;
+}
+
+function renderSemMetas(D) {
+  const card = $("card-sem-metas");
+  const linhas = D.ativas.filter(d => d.semDestino);
+  const total = linhas.reduce((s,d) => s + safe(d.valor), 0);
+  card.hidden = total <= 0;
+  if (card.hidden) return;
+
+  $("sm-total").textContent = brl(total);
+  $("sm-share").textContent = D.prov ? `${pct(total / D.prov)} do provisionado` : "";
+
+  const porG = new Map();
+  for (const d of linhas) {
+    const k = D.gDe.get(d.piPai || d.pi) || d.piPai || d.pi;
+    const o = porG.get(k) || {valor:0, n:0};
+    o.valor += safe(d.valor); o.n++;
+    porG.set(k, o);
+  }
+  const grupo = k => D.grupos.find(g => g.id === k);
+
+  const host = $("sm-list"); host.textContent = "";
+  const linhasG = [...porG.entries()].sort((a,b) => b[1].valor - a[1].valor);
+  for (const [k, o] of linhasG) {
+    const g = grupo(k) || {nome:k, pis:[k], provisionado:0};
+    const share = safe(g.provisionado) ? o.valor / g.provisionado : 0;
+    const row = el("div","mini-row");
+    row.title = `${g.nome}\n${brl(o.valor)} sem objeto associado, de ${brl(g.provisionado)} provisionados`
+              + `\n${o.n} ${o.n === 1 ? "lançamento" : "lançamentos"}`;
+    const nm = el("div","nm");
+    nm.append(document.createTextNode(g.nome), Object.assign(el("small"), {
+      textContent: `${g.pis.length > 2 ? g.pis.length + " planos internos" : g.pis.join(" · ")}`
+                 + ` · ${o.n} ${o.n === 1 ? "lançamento" : "lançamentos"}`,
+    }));
+    const vl = el("div","vl"); vl.append(document.createTextNode(brl(o.valor)),
+      Object.assign(el("em"),{textContent:pct(share)}));
+    const bar = el("div","bar"); const fill = el("i");
+    fill.style.width = clamp(share, 0, 1) * 100 + "%";
+    bar.append(fill);
+    row.append(nm, vl, bar); host.append(row);
+  }
+
+  const nPi = new Set(linhas.map(d => d.piPai || d.pi)).size;
+  $("sm-foot").textContent =
+    `${linhas.length} ${linhas.length === 1 ? "lançamento" : "lançamentos"} em ${nPi} `
+    + `${nPi === 1 ? "plano interno" : "planos internos"}: crédito registrado sem objeto de aquisição associado. `
+    + `Cada barra e o percentual ao lado são sobre o provisionado do próprio plano; o percentual do topo é sobre o `
+    + `provisionado total.`;
+}
+
+function niceMax(v) {
+  if (v <= 0) return 1;
+  const mag = Math.pow(10, Math.floor(Math.log10(v)));
+  for (const m of [1,1.25,1.5,2,2.5,3,4,5,6,7.5,8,10]) if (mag * m >= v) return mag * m;
+  return mag * 10;
+}
+
+function renderConsolidado(D) {
+  const host = $("chart-consolidado"); host.textContent = "";
+  const S5 = series(D);
+  const ALT = 260, TICKS = 4;
+  const max = niceMax(Math.max(...S5.map(s => safe(s.v)), 1) * 1.1);
+  host.style.setProperty("--h", ALT + "px");
+
+  const y = el("div","cc-y");
+  for (let i = 0; i <= TICKS; i++) {
+    const s = el("span", null, i === 0 ? "0" : brl0(max * i / TICKS).replace("R$ ",""));
+    s.style.bottom = (i / TICKS * 100) + "%";
+    y.append(s);
+  }
+  host.append(y);
+
+  const plot = el("div","cc-plot");
+  for (let i = 1; i <= TICKS; i++) { const g = el("i","gl"); g.style.bottom = (i / TICKS * 100) + "%"; plot.append(g); }
+  const cols = el("div","cc-cols");
+  for (const s of S5) {
+    const h = clamp(safe(s.v) / max, 0, 1) * 100;
+    const col = el("div","cc-col");
+    col.title = `${s.k}: ${brl(s.v)}${s.k === "Provisionado" ? "" : ` · ${pct(s.share)} do provisionado`}`;
+    const bar = el("div", "cc-bar" + (s.k === "Provisionado" ? " total" : ""));
+    bar.style.height = h + "%"; bar.style.background = s.cor;
+    const lab = el("div","cc-lab", brl0(s.v)); lab.style.bottom = `calc(${h}% + 7px)`;
+    col.append(bar, lab); cols.append(col);
+  }
+  plot.append(cols); host.append(plot);
+
+  const names = el("div","cc-names");
+  for (const s of S5) {
+    const n = el("div","cc-name");
+    n.append(Object.assign(el("b"),{textContent:s.k}),
+             el("span", null, s.k === "Provisionado" ? "100%" : pct(s.share)));
+    names.append(n);
+  }
+  host.append(names);
+  host.append(el("div","cc-note",
+    "Provisionado é o total do exercício; disponível e empenhado o repartem. Liquidado está contido no empenhado, e pago no liquidado."));
+
+  // mesma informação em barras horizontais, para telas estreitas
+  hbars($("chart-consolidado-mob"), S5.map(s => ({
+    label:s.k, sub:s.k === "Provisionado" ? "total do exercício" : `${pct(s.share)} do provisionado`,
+    valor:safe(s.v), color:s.cor,
+  })), null);
+}
+
+
+/* ───────────────────────────── painel: alertas ───────────────────────────── */
+function renderAlerts(D) {
+  const host = $("alerts"); host.textContent = "";
+  const A = [];
+  const add = (sev,t,d,val) => A.push({sev,t,d,val});
+
+  [["liquidado",D.liq,D.metas.liquidado,"Liquidação"],["pago",D.pag,D.metas.pago,"Pagamento"]].forEach(([,v,meta,nome]) => {
+    const share = D.prov ? v / D.prov : 0;
+    if (share < meta) add("crit", `${nome} abaixo da meta de 30SET`,
+      `${pct(share)} executado contra meta de ${pct(meta,0)}. Faltam ${brl0(meta * D.prov - v)} e ${D.dias >= 0 ? D.dias + " dias" : "o prazo já venceu"}.`,
+      pct(share));
+  });
+
+  if (D.semDestino > 0) add("warn", "Crédito sem destino definido",
+    `Valor registrado na base sem objeto de aquisição associado. Enquanto não houver destino, não há processo a instaurar.`,
+    brl0(D.semDestino));
+
+  D.grupos.forEach(p => {
+    const share = safe(p.provisionado) ? safe(p.empenhado) / safe(p.provisionado) : 0;
+    if (share >= .98 && safe(p.provisionado) > 0)
+      add("good", `${p.nome} praticamente esgotado`,
+        `${pct(share)} empenhado. Disponível de ${brl(p.saldo)} — novas demandas neste plano dependem de crédito adicional.`, brl0(p.saldo));
+    if (safe(p.semDestino) > safe(p.saldo) + 1)
+      add("warn", `${p.nome}: destino a regularizar`,
+        `${brl0(p.semDestino)} sem metas definidas, mas o disponível do plano é de apenas ${brl(p.saldo)} — parte já foi empenhada sem objeto registrado.`,
+        brl0(p.semDestino));
+  });
+
+  const rpAberto = S.rp.filter(r => r.aberto).reduce((s,r) => s + safe(r.valor), 0);
+  if (rpAberto > 0) add("warn", "Restos a pagar em aberto",
+    S.rp.filter(r => r.aberto).map(r => `${r.classe}: ${brl(r.valor)}`).join(" · "), brl0(rpAberto));
+
+  const ordem = {crit:0, warn:1, serious:2, good:3};
+  A.sort((a,b) => ordem[a.sev] - ordem[b.sev]);
+  const cor = {crit:"var(--s-crit)", warn:"var(--s-warn)", serious:"var(--s-serious)", good:"var(--s-good)"};
+
+  if (!A.length) { host.append(Object.assign(el("div","alert"),{textContent:"Nenhum ponto de atenção na posição atual."})); return; }
+  for (const a of A) {
+    const n = el("div","alert");
+    const s = el("div","stripe"); s.style.background = cor[a.sev];
+    const b = el("div","body");
+    b.append(el("div","t",a.t), el("div","d",a.d));
+    n.append(s, b, el("div","val num",a.val));
+    host.append(n);
+  }
+}
+
+/* ───────────────────────────── painel: execução por PI ───────────────────────────── */
+function renderChartPi(D) {
+  const host = $("chart-pi"); host.textContent = "";
+  const ticks = 4;
+
+  const ax = el("div","axis");
+  for (let i = 0; i <= ticks; i++) {
+    const s = el("span", null, (i * 25) + "%");
+    s.style.left = (i / ticks * 100) + "%";
+    ax.append(s);
+  }
+  host.append(ax);
+
+  for (const p of D.grupos) {
+    const prov = safe(p.provisionado);
+    const row = el("div","brow clickable" + (S.filtroPi === p.id ? " on" : ""));
+    row.tabIndex = 0; row.setAttribute("role","button");
+    row.setAttribute("aria-label", `Filtrar demandas de ${p.nome}`);
+    const act = () => { S.filtroPi = S.filtroPi === p.id ? null : p.id; render(); };
+    row.addEventListener("click", act);
+    row.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } });
+
+    const top = el("div","brow-top");
+    top.append(el("span","name",p.nome),
+               el("span","code", p.pis.length > 2 ? `${p.pis.length} planos internos` : p.pis.join(" · ")));
+    const figs = el("div","figs");
+    const f1 = el("span",null); f1.append(document.createTextNode("provisionado "), Object.assign(el("b"),{textContent:brl0(prov)}));
+    const f2 = el("span",null); f2.append(document.createTextNode("empenhado "), Object.assign(el("b"),{textContent:pct(prov ? safe(p.empenhado)/prov : 0)}));
+    const f3 = el("span",null); f3.append(document.createTextNode("disponível "), Object.assign(el("b"),{textContent:brl0(p.saldo)}));
+    figs.append(f1,f2,f3); top.append(figs);
+
+    const plot = el("div","plot");
+    const gl = el("div","gridlines");
+    for (let i = 1; i <= ticks; i++) { const g = el("i"); g.style.left = (i/ticks*100) + "%"; gl.append(g); }
+    plot.append(gl);
+
+    const tr = el("div","tr"); tr.style.width = "100%";
+    const relW = v => prov ? clamp(safe(v)/prov,0,1) * 100 : 0;
+    const be = el("div","b-emp"); be.style.width = relW(p.empenhado) + "%";
+    plot.append(tr, be);
+    if (safe(p.liquidado) > 0) { const bl = el("div","b-liq"); bl.style.width = relW(p.liquidado) + "%"; plot.append(bl); }
+    if (safe(p.pago) > 0) { const bp = el("div","b-pag"); bp.style.width = relW(p.pago) + "%"; plot.append(bp); }
+    const g = el("div","goal"); g.style.left = `calc(${D.metas.empenhado * 100}% - 1px)`;
+    g.title = `Meta de empenho: ${pct(D.metas.empenhado,0)} = ${brl(prov * D.metas.empenhado)}`;
+    plot.append(g);
+
+    row.append(top, plot);
+    row.title = `${p.nome}\n${p.pis.join(" · ")}\nProvisionado ${brl(prov)}\nEmpenhado ${brl(p.empenhado)}\n`
+              + `Liquidado ${brl(p.liquidado)}\nPago ${brl(p.pago)}\nDisponível ${brl(p.saldo)}\n${p.n} demanda(s) registrada(s)`;
+    host.append(row);
+  }
+
+  const lg = $("legend-pi"); lg.textContent = "";
+  const items = [["--stage-1","Empenhado"],["--stage-2","Liquidado"],["--stage-3","Pago"],["--track","Disponível"]];
+  for (const [tok,label] of items) {
+    const n = el("span","lg"); const i = el("i"); i.style.background = `var(${tok})`; n.append(i, el("span",null,label)); lg.append(n);
+  }
+  const mk = el("span","lg"); mk.append(el("i","line"), el("span",null,`Meta de empenho (${pct(D.metas.empenhado,0)})`)); lg.append(mk);
+  const nota = el("span","lg"); nota.style.color = "var(--muted)";
+  nota.append(el("span",null,"Cada barra vai de 0% a 100% do provisionado do próprio PI"));
+  lg.append(nota);
+}
+
+/* ───────────────────────────── painel: barras simples ───────────────────────────── */
+function hbars(host, rows, total) {
+  host.textContent = "";
+  const max = Math.max(...rows.map(r => Math.abs(r.valor)), 1);
+  rows.forEach((r,i) => {
+    const n = el("div","hb-row");
+    const top = el("div","hb-top");
+    const l = el("div","l"); l.append(document.createTextNode(r.label));
+    if (r.sub) l.append(Object.assign(el("small"),{textContent:r.sub}));
+    const right = el("div","r num"); right.append(document.createTextNode(brl(r.valor)));
+    if (total) right.append(Object.assign(el("em"),{textContent:pct(r.valor/total)}));
+    top.append(l, right);
+    const bar = el("div","hb-bar"); const fill = el("i");
+    fill.style.width = clamp(Math.abs(r.valor)/max,0,1) * 100 + "%";
+    fill.style.background = r.color || `var(${SERIES[i % SERIES.length]})`;
+    bar.append(fill);
+    n.append(top, bar);
+    if (r.title) n.title = r.title;
+    host.append(n);
+  });
+}
+
+const SVGNS = "http://www.w3.org/2000/svg";
+const svgEl = (tag, attrs) => {
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+};
+
+/* gráfico de pizza: as fatias carregam a proporção, a legenda carrega nome e valor */
+function pizza(host, rows, aria) {
+  host.textContent = "";
+  const dados = rows.map((r,i) => ({...r, valor:Math.max(0, safe(r.valor)), cor:`var(${SERIES8[i % SERIES8.length]})`}))
+                    .filter(r => r.valor > 0)
+                    .sort((a,b) => b.valor - a.valor)
+                    .map((r,i) => ({...r, cor:`var(${SERIES8[i % SERIES8.length]})`}));
+  const total = dados.reduce((s,r) => s + r.valor, 0);
+  if (!total) { host.append(el("div","cc-note","Sem valores lançados.")); return; }
+
+  const wrap = el("div","pie-wrap");
+  const R = 92, C = 100;
+  const svg = svgEl("svg", {viewBox:"0 0 200 200", class:"pie-svg", role:"img",
+                            "aria-label": aria || "Gráfico de pizza"});
+  let ang = -Math.PI / 2;
+  for (const r of dados) {
+    const frac = r.valor / total;
+    const a2 = ang + frac * Math.PI * 2;
+    let no;
+    if (frac > 0.9999) {
+      no = svgEl("circle", {cx:C, cy:C, r:R});
+    } else {
+      const x1 = C + R * Math.cos(ang),  y1 = C + R * Math.sin(ang);
+      const x2 = C + R * Math.cos(a2),   y2 = C + R * Math.sin(a2);
+      no = svgEl("path", {d:`M ${C} ${C} L ${x1.toFixed(2)} ${y1.toFixed(2)} `
+                          + `A ${R} ${R} 0 ${frac > 0.5 ? 1 : 0} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`});
+    }
+    no.style.fill = r.cor;
+    no.style.stroke = "var(--surface)";
+    no.style.strokeWidth = "2";
+    const t = svgEl("title"); t.textContent = `${r.label}: ${brl(r.valor)} · ${pct(frac)}`;
+    no.append(t);
+    svg.append(no);
+    ang = a2;
+  }
+
+  const leg = el("div","pie-leg");
+  for (const r of dados) {
+    const row = el("div","pie-leg-row");
+    row.title = `${r.label}: ${brl(r.valor)} · ${pct(r.valor / total)}`;
+    const sw = el("i"); sw.style.background = r.cor;
+    const nm = el("div","nm"); nm.append(document.createTextNode(r.label));
+    if (r.sub) nm.append(Object.assign(el("small"),{textContent:r.sub}));
+    const vl = el("div","vl"); vl.append(document.createTextNode(brl(r.valor)),
+      Object.assign(el("em"),{textContent:pct(r.valor / total)}));
+    row.append(sw, nm, vl); leg.append(row);
+  }
+
+  wrap.append(svg, leg); host.append(wrap);
+}
+
+function renderDestinacao(D) {
+  const piRows = D.grupos.map(p => ({
+    label:p.nome, sub: p.pis.length > 2 ? `${p.pis.length} planos internos` : p.pis.join(" · "),
+    valor:safe(p.provisionado),
+  }));
+  const piTot = piRows.reduce((s,r) => s + r.valor, 0);
+  pizza($("chart-pimag"), piRows, "Provisionado por plano interno");
+  $("pi-tot").textContent = brl0(piTot);
+
+  const MEIOS = (S.config && S.config.meios) || {};
+  const mRows = D.meios.map(m => ({
+    label:(MEIOS[m.ugr] && MEIOS[m.ugr].sigla) || m.ugr,
+    sub:`UGR ${m.ugr}`, valor:m.valor,
+  }));
+  const mTot = mRows.reduce((s,r) => s + r.valor, 0);
+  pizza($("chart-meios"), mRows, "Manutenção Corrente por meio");
+  $("meios-tot").textContent = brl0(mTot);
+
+  const NDN = (S.config && S.config.nd) || {};
+  const ndRows = [...D.byNd.entries()].sort((a,b) => b[1]-a[1]).map(([k,v]) => ({
+    label:`ND ${k}`, sub:NDN[k] || "", valor:v,
+  }));
+  const ndTot = ndRows.reduce((s,r) => s + r.valor, 0);
+  pizza($("chart-nd"), ndRows, "Por natureza de despesa");
+  $("nd-tot").textContent = brl0(ndTot);
+}
+
+function renderAndamento(D) {
+  const FCOR = {"Sem informação":"var(--muted)","Previsto":"var(--c2)","Aguardando":"var(--c3)",
+                "Em análise":"var(--c4)","Enviado":"var(--c5)","Processada":"var(--c6)",
+                "Empenhado":"var(--stage-1)","Liquidado":"var(--stage-2)","Pago":"var(--stage-3)"};
+  const rows = FASES.map(f => ({f, ...D.byFase.get(f)})).filter(r => r.n > 0).map(r => ({
+    label:faseLabel(r.f), sub:`${r.n} ${r.n === 1 ? "demanda" : "demandas"}`, valor:r.valor, color:FCOR[r.f],
+  }));
+  const tot = rows.reduce((s,r) => s + r.valor, 0);
+  hbars($("chart-fase"), rows, tot);
+  $("fase-tot").textContent = `${D.nTotal} demandas · ${brl0(tot)}`;
+
+  const rpRows = S.rp.slice().sort((a,b) => safe(b.valor) - safe(a.valor)).map(r => ({
+    label:r.classe, sub:r.aberto ? "em aberto" : "encerrado", valor:safe(r.valor),
+    color:r.aberto ? "var(--s-warn)" : "var(--c3)",
+  }));
+  const rpTot = rpRows.reduce((s,r) => s + r.valor, 0);
+  hbars($("chart-rp"), rpRows, rpTot);
+  $("rp-tot").textContent = brl0(rpTot);
+}
+
+/* ───────────────────────────── painel: tabela ───────────────────────────── */
+function filtradas(D) {
+  return D.ativas.filter(d =>
+    (!S.filtroPi || (D.gDe.get(d.piPai || d.pi) || d.piPai || d.pi) === S.filtroPi) &&
+    (!S.filtroFase || (FASES.includes(d.situacao) ? d.situacao : "Sem informação") === S.filtroFase)
+  ).sort((a,b) => safe(b.valor) - safe(a.valor));
+}
+function renderChips(D) {
+  const host = $("chips"); host.textContent = "";
+  const mk = (label, on, fn, n) => {
+    const b = el("button","chip"); b.type = "button";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.append(document.createTextNode(label));
+    if (n != null) b.append(Object.assign(el("span","n"),{textContent:n}));
+    b.addEventListener("click", fn); host.append(b);
+  };
+  mk("Todas", !S.filtroPi && !S.filtroFase, () => { S.filtroPi = null; S.filtroFase = null; render(); }, D.nTotal);
+  D.grupos.forEach(p => mk(p.nome, S.filtroPi === p.id, () => { S.filtroPi = S.filtroPi === p.id ? null : p.id; render(); }, p.n));
+  FASES.forEach(f => { const o = D.byFase.get(f); if (o.n) mk(faseLabel(f), S.filtroFase === f, () => { S.filtroFase = S.filtroFase === f ? null : f; render(); }, o.n); });
+}
+function renderTable(D) {
+  const MEIOS = (S.config && S.config.meios) || {};
+  const NDN = (S.config && S.config.nd) || {};
+  const rows = filtradas(D);
+  const t = $("tbl-dem"); t.textContent = "";
+  const COLS = ["Meio","Plano Interno","ND","Valor","Objeto","Situação","Nota de empenho"];
+  const thead = el("thead"); const tr = el("tr");
+  COLS.forEach((h,i) => tr.append(el("th", i === 3 ? "r" : null, h)));
+  thead.append(tr); t.append(thead);
+  const tb = el("tbody");
+  for (const d of rows) {
+    const gid = D.gDe.get(d.piPai || d.pi) || d.piPai || d.pi;
+    const g = D.grupos.find(x => x.id === gid);
+    const r = el("tr");
+    // dados técnicos ficam no título da linha: continuam disponíveis, sem poluir a leitura
+    r.title = [`Plano interno: ${d.pi || "—"}`,
+               d.solemp ? `SOLEMP / ALTCRED: ${d.solemp.replace(/\n/g," · ")}` : null,
+               d.ne ? `NE: ${String(d.ne).replace(/\n/g," · ")}` : null,
+               d.nd ? `ND ${d.nd} — ${NDN[d.nd] || ""}`.trim() : null,
+               d.obs ? `Obs.: ${d.obs}` : null].filter(Boolean).join("\n");
+    r.append(el("td",null,(MEIOS[d.ugr] && MEIOS[d.ugr].sigla) || d.ugr || "—"));
+    r.append(el("td",null,(g && g.nome) || d.descPi || d.pi || "—"));
+    const tdNd = el("td",null,d.nd || "—");
+    if (d.nd && NDN[d.nd]) tdNd.title = NDN[d.nd];
+    r.append(tdNd);
+    r.append(el("td","r", brl(d.valor)));
+    r.append(el("td","desc", d.descricao || "—"));
+    const tdS = el("td"); const f = FASES.includes(d.situacao) ? d.situacao : "Sem informação";
+    const pl = el("span","pill " + (f === "Sem informação" ? "neutral" : ["Empenhado","Liquidado","Pago"].includes(f) ? "good" : "warn"));
+    pl.append(el("span",null,faseLabel(f))); tdS.append(pl); r.append(tdS);
+    const tdNe = el("td","mono", neCurto(d.ne) || "—");
+    if (d.ne) tdNe.title = String(d.ne).replace(/\n/g, " · ");
+    r.append(tdNe);
+    tb.append(r);
+  }
+  if (!rows.length) {
+    const r = el("tr"); const td = el("td",null,"Nenhuma meta com os filtros atuais.");
+    td.colSpan = COLS.length; r.append(td); tb.append(r);
+  }
+  t.append(tb);
+  const soma = rows.reduce((s,d) => s + safe(d.valor), 0);
+  $("dem-count").textContent = `${rows.length} de ${D.nTotal} metas · ${brl(soma)}`;
+}
+
+/* ───────────────────────────── render ───────────────────────────── */
+let pintando = false;
+function render() {
+  if (!S.ready || pintando) return;
+  pintando = true;
+  try {
+    const D = derive();
+    const c = S.config || {};
+    $("om-nome").textContent = c.sigla ? `Créditos ${c.sigla}` : "Créditos CHN-4";
+    $("om-sub").textContent = [c.om, c.divisao].filter(Boolean).join(" · ") || "Divisão de Intendência";
+    $("stamp-data").textContent = c.atualizadoEm ? dmyhm(c.atualizadoEm) : "—";
+    $("ex-1").textContent = c.exercicio || "—";
+    $("foot-gerente").textContent = c.gerente ? `Gerente de crédito: ${c.gerente}` : "";
+    $("foot-ug").textContent = [c.uge && "UGE " + c.uge, c.ugr && "UGR " + c.ugr, c.uo && "UO " + c.uo].filter(Boolean).join(" · ");
+
+    renderTiles(D); renderConsolidado(D); renderSemMetas(D); renderAlerts(D);
+    renderChartPi(D); renderDestinacao(D); renderAndamento(D);
+    renderChips(D); renderTable(D); renderModNav();
+
+    $("view-painel").hidden = false;
+    $("boot").hidden = true;
+  } finally { pintando = false; }
+}
+
+/* ───────────────────────────── leitura da planilha ───────────────────────────── */
+const PUB = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ71i6iSfEc8aNLtdx-ldBkvogqgQYBdbf03Scuy3mjOd2k6_DbMkMD8ZFBBWh6nTu1pqDz787P9nTt/pub?single=true&output=csv&gid=";
+const GID = {creditos:"29490223", metas:"720560572"};
+
+/* CSV com campos entre aspas e quebras de linha dentro do campo */
+function parseCSV(t) {
+  const linhas = []; let campo = "", linha = [], aspas = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (aspas) {
+      if (c === '"') { if (t[i+1] === '"') { campo += '"'; i++; } else aspas = false; }
+      else campo += c;
+    } else if (c === '"') aspas = true;
+    else if (c === ",") { linha.push(campo); campo = ""; }
+    else if (c === "\n") { linha.push(campo); linhas.push(linha); linha = []; campo = ""; }
+    else if (c !== "\r") campo += c;
+  }
+  if (campo || linha.length) { linha.push(campo); linhas.push(linha); }
+  return linhas;
+}
+
+/* " R$  1 918 430,62 " → 1918430.62 — aceita ponto ou vírgula decimal */
+function num(v) {
+  if (typeof v === "number") return v;
+  let s = String(v || "").replace(/[\s\u00a0\u202f\u2009]/g, "").replace(/R\$/gi, "");
+  if (!s || /^-?$/.test(s)) return 0;
+  const virg = s.lastIndexOf(","), pto = s.lastIndexOf(".");
+  if (virg > pto) s = s.replace(/\./g, "").replace(",", ".");
+  else if (pto > virg) s = s.replace(/,/g, "");
+  else s = s.replace(/[.,]/g, "");
+  const n = parseFloat(s.replace(/[^0-9.\-]/g, ""));
+  return isFinite(n) ? n : 0;
+}
+
+const norm = v => String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+const tidy = v => String(v || "").replace(/\s+/g, " ").trim();
+const titulo = v => tidy(v).toLowerCase().replace(/(^|[\s\-–/(])([a-zà-ú])/g,
+                      (m, a, b) => a + b.toUpperCase());
+
+const NOMES = {
+  B4D2FC302KX:"Despesas de Funcionamento", B4D2MN302KX:"Despesas de Manutenção de OM",
+  P4HNZZ002KX:"Manutenção Corrente", L46301001KX:"Auxílios à Navegação",
+  L463010Z1L0:"Auxílios à Navegação – Boias", B441MRZ0100:"Manutenção de Rancho",
+  Z4C3SLNZ1B4:"Sobras Lícitas – Nac. Z", Z4C3SLA01B4:"Sobras Lícitas – Aquisições",
+  Z4C3SLN01L0:"Sobras Lícitas – Municiamento", Z4F9014Z1B4:"Manutenção e Recuperação de PNR",
+  L475DP0Z2KX:"Diárias de Pessoal", B44101002DD:"Alimentação de Pessoal",
+};
+const GRUPO = {L46301001KX:"Auxílios à Navegação", L463010Z1L0:"Auxílios à Navegação"};
+const PAI = {
+  L46301002KX:"L46301001KX", B441MRZ02DD:"B441MRZ0100", B4D2FC3Z2KX:"B4D2FC302KX",
+  P4HNGS002KX:"P4HNZZ002KX", P4HNTC002KX:"P4HNZZ002KX",
+  P4HNRT002KX:"P4HNZZ002KX", P4HNRX002KX:"P4HNZZ002KX",
+  P4HNGS0Z2KX:"P4HNZZ002KX", P4HNTC0Z2KX:"P4HNZZ002KX",
+  P4HNRT0Z2KX:"P4HNZZ002KX", P4HNRX0Z2KX:"P4HNZZ002KX",
+};
+const SIT = {
+  enviado:"Enviado", aguardando:"Aguardando", aguardadando:"Aguardando",
+  empenhado:"Empenhado", analise:"Em análise", "análise":"Em análise",
+  "em analise":"Em análise", "em análise":"Em análise", processada:"Processada",
+  procesada:"Processada", liquidado:"Liquidado", pago:"Pago", previsto:"Previsto",
+  "-":"Sem informação", "":"Sem informação",
+};
+
+function lerCreditos(linhas) {
+  const h = linhas.findIndex(r => (r[4] || "").trim() === "PI" &&
+                                  /PROVISIONADO/i.test(r[6] || ""));
+  if (h < 0) throw new Error("não achei o cabeçalho da tabela de créditos");
+  const pis = [];
+  for (let i = h + 1; i < linhas.length; i++) {
+    const r = linhas[i], cod = norm(r[4]);
+    if (!cod) { if (/TOTAL/i.test(r[0] || "")) break; else continue; }
+    pis.push({
+      pi: cod, descricao: NOMES[cod] || titulo(r[5]) || cod,
+      tipo: tidy(r[0]) || "LOA MB", uge: tidy(r[1]), ugr: tidy(r[2]), uo: tidy(r[3]),
+      grupo: GRUPO[cod] || (cod.startsWith("Z4C3SL") ? "Sobras Lícitas" : null),
+      provisionado: num(r[6]), empenhado: num(r[8]),
+      liquidado: num(r[9]), pago: num(r[10]),
+    });
+  }
+  return pis;
+}
+
+function lerMetas(linhas, pis) {
+  const existe = new Set(pis.map(p => p.pi));
+  const h = linhas.findIndex(r => /^\s*PI\s*$/i.test(r[1] || "") && /VALOR/i.test(r[4] || ""));
+  const ini = h < 0 ? 1 : h + 1;
+  const out = [];
+  for (let i = ini; i < linhas.length; i++) {
+    const r = linhas[i], cod = norm(r[1]), valor = num(r[4]);
+    if (!cod && !valor) continue;
+    let pai = PAI[cod] || cod;
+    if (!existe.has(pai)) pai = existe.has(cod) ? cod : pai;
+    const desc = tidy(r[8]) || "Sem descrição";
+    const sit = tidy(r[5]).toLowerCase();
+    out.push({
+      id: "d" + String(i).padStart(3, "0"), ordem: i,
+      ugr: tidy(r[0]) || null, pi: cod, piPai: pai,
+      descPi: titulo(r[2]).replace(/\bMnt\b/g, "Manutenção"),
+      nd: tidy(r[3]) || null, valor,
+      situacao: SIT[sit] !== undefined ? SIT[sit] : (tidy(r[5]) || "Sem informação"),
+      solemp: tidy(r[6]) || null,
+      ne: (r[7] && tidy(r[7]) !== "-") ? String(r[7]).trim() : null,
+      descricao: desc, obs: tidy(r[9]) || null, excluida: false,
+      semDestino: /sem metas|sem destino/i.test(desc), notaImportacao: null,
+    });
+  }
+  return out;
+}
+
+const CONFIG = {
+  om:"Centro de Hidrografia e Navegação do Norte", sigla:"CHN-4",
+  divisao:"Divisão de Intendência", exercicio:2026,
+  metas:{empenhado:.80, liquidado:.70, pago:.60}, metaData:"30SET",
+  gerente:"Darllan de Gois Santos – Segundo-Tenente (IM)",
+  meios:{
+    "84510":{sigla:"CHN-4", nome:"Centro de Hidrografia e Navegação do Norte"},
+    "84513":{sigla:"NHo Garnier Sampaio", nome:"Navio Hidroceanográfico Garnier Sampaio"},
+    "84514":{sigla:"NB Ten. Castelo", nome:"Navio Balizador Tenente Castelo"},
+    "84515":{sigla:"AvHoFlu Rio Tocantins", nome:"Aviso Hidroceanográfico Fluvial Rio Tocantins"},
+    "84516":{sigla:"AvHoFlu Rio Xingu", nome:"Aviso Hidroceanográfico Fluvial Rio Xingu"},
+  },
+  nd:{"30":"Material de Consumo", "39":"Outros Serviços de Terceiros – PJ",
+      "52":"Equipamentos e Material Permanente"},
+  fases:FASES,
+};
+
+function semBase(motivo) {
+  $("boot").hidden = false;
+  $("boot").textContent = motivo;
+  $("layout").style.display = "none";
+}
+
+async function carregar() {
+  const busca = async gid => {
+    const r = await fetch(PUB + gid + "&_=" + Date.now(), {cache:"no-store"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return parseCSV(await r.text());
+  };
+  const [cred, met] = await Promise.all([busca(GID.creditos), busca(GID.metas)]);
+  S.pis = lerCreditos(cred);
+  S.demandas = lerMetas(met, S.pis);
+  S.rp = [];
+  const p0 = S.pis[0] || {};
+  S.config = Object.assign({}, CONFIG, {
+    uge:p0.uge, ugr:p0.ugr, uo:p0.uo,
+    atualizadoEm:new Date().toISOString(),
+  });
+  S.ready = true;
+  render();
+}
+
+carregar().catch(e => {
+  console.error(e);
+  semBase("Não consegui ler a planilha agora. Atualize a página em alguns instantes; "
+          + "se continuar, a publicação da planilha pode ter sido interrompida.");
+});
+setInterval(() => carregar().catch(() => {}), 10 * 60 * 1000);
+
+})();
+</script>
+
+</body>
+</html>
