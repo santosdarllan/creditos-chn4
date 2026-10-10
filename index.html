@@ -455,13 +455,13 @@ textarea{min-height:62px; resize:vertical}
       </div>
       <div class="tiles" id="tiles" style="margin-top:18px"></div>
 
-      <div class="card mini" id="card-sem-metas" hidden>
+      <div class="card" style="margin-top:18px">
         <div class="card-h">
-          <h3>Sem metas definidas</h3>
-          <span class="mini-tot"><b id="sm-total">—</b><span id="sm-share"></span></span>
+          <h3>Execução por plano interno</h3>
+          <span class="sub">Clique em um plano para filtrar as metas</span>
         </div>
-        <div class="mini-list" id="sm-list"></div>
-        <div class="mini-foot" id="sm-foot"></div>
+        <div class="chart" id="chart-pi"></div>
+        <div class="legend" id="legend-pi"></div>
       </div>
     </section>
 
@@ -475,13 +475,20 @@ textarea{min-height:62px; resize:vertical}
 
     <section class="sec" data-mod="pi">
       <div class="sec-head">
-        <span class="eyebrow">Distribuição orçamentária</span>
-        <h2>Execução por Plano Interno</h2>
-        <span class="note">Clique em um PI para filtrar as demandas</span>
+        <span class="eyebrow">Planos internos</span>
+        <h2>Crédito sem metas definidas</h2>
+        <span class="note">Valor lançado sem objeto de aquisição associado</span>
       </div>
-      <div class="card">
-        <div class="chart" id="chart-pi"></div>
-        <div class="legend" id="legend-pi"></div>
+      <div class="card mini" id="card-sem-metas" hidden>
+        <div class="card-h">
+          <h3>Sem metas definidas</h3>
+          <span class="mini-tot"><b id="sm-total">—</b><span id="sm-share"></span></span>
+        </div>
+        <div class="mini-list" id="sm-list"></div>
+        <div class="mini-foot" id="sm-foot"></div>
+      </div>
+      <div class="card card-pad" id="sm-vazio" hidden>
+        Todo o crédito provisionado tem meta de execução associada.
       </div>
     </section>
 
@@ -585,8 +592,8 @@ const SERIES8 = ["--c3","--c2","--c1","--c4","--c5","--c6","--c7","--c8"];
 /* ───────────────────────────── state ───────────────────────────── */
 const MODULOS = [
   {id:"consolidado", nome:"Posição consolidada"},
-  {id:"pi",          nome:"Planos internos"},
   {id:"demandas",    nome:"Metas de execução"},
+  {id:"pi",          nome:"Planos internos"},
   {id:"destinacao",  nome:"Destinação"},
   {id:"andamento",   nome:"Andamento"},
   {id:"atencao",     nome:"Atenção"},
@@ -753,6 +760,7 @@ function renderSemMetas(D) {
   const linhas = D.ativas.filter(d => d.semDestino);
   const total = linhas.reduce((s,d) => s + safe(d.valor), 0);
   card.hidden = total <= 0;
+  $("sm-vazio").hidden = !card.hidden;
   if (card.hidden) return;
 
   $("sm-total").textContent = brl(total);
