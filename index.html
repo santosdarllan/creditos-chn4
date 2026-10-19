@@ -254,6 +254,24 @@ textarea{min-height:62px; resize:vertical}
 
 .pair{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:18px; align-items:start}
 
+/* ── restos a pagar: CHN-4 em destaque + os quatro navios em quadros menores ── */
+.meio-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:14px; align-items:start}
+.meio-grid > .m-chn{grid-column:1; grid-row:1 / span 2}
+.meio-grid .card-pad{padding:14px}
+.meio-grid .card-h{padding:12px 14px}
+.meio-grid .card-h h3{font-size:14px}
+.meio-grid .m-nav .hb{gap:10px}
+.meio-grid .m-nav .hb-row .hb-top{display:block; margin-bottom:4px}
+.meio-grid .m-nav .hb-row .hb-top .l{font-size:12px}
+.meio-grid .m-nav .hb-row .hb-top .r{margin-left:0; display:block; margin-top:2px}
+.meio-grid .m-nav .hb-bar{height:10px}
+.meio-grid .vazio{color:var(--muted); font-size:12.5px}
+@media(max-width:1020px){
+  .meio-grid{grid-template-columns:1fr 1fr}
+  .meio-grid > .m-chn{grid-column:1 / -1; grid-row:auto}
+}
+@media(max-width:640px){ .meio-grid{grid-template-columns:1fr} }
+
 /* ── navegação de módulos ── */
 .layout{display:grid; grid-template-columns:minmax(0,1fr); gap:0}
 .layout-main{min-width:0}
@@ -556,13 +574,6 @@ textarea{min-height:62px; resize:vertical}
         </div>
       </div>
 
-      <div class="card" style="margin-top:18px" id="card-rp-det">
-        <div class="card-h">
-          <h3>Restos a pagar — nota a nota</h3>
-          <span class="sub" id="rp-det-tot"></span>
-        </div>
-        <div class="tblwrap"><table id="tbl-rp"></table></div>
-      </div>
     </section>
 
     <section class="sec" data-mod="demandas">
@@ -579,11 +590,20 @@ textarea{min-height:62px; resize:vertical}
 
     <section class="sec" data-mod="justificativas">
       <div class="sec-head">
-        <span class="eyebrow">Justificativas e prazos</span>
-        <h2>Consolidado de restos a pagar</h2>
+        <span class="eyebrow">Consolidado</span>
+        <h2>Restos a pagar</h2>
         <span class="note" id="just-count"></span>
       </div>
-      <div id="just-lista"></div>
+      <div class="meio-grid" id="just-lista"></div>
+
+      <div class="card" style="margin-top:18px" id="card-rp-det">
+        <div class="card-h">
+          <h3>Nota a nota</h3>
+          <span class="sub" id="rp-det-tot"></span>
+        </div>
+        <div class="chips" id="chips-rp"></div>
+        <div class="tblwrap"><table id="tbl-rp"></table></div>
+      </div>
     </section>
 
     <div class="foot">
@@ -646,14 +666,15 @@ const MODULOS = [
   {id:"destinacao",     nome:"Destinação"},
   {id:"andamento",      nome:"Andamento"},
   {id:"atencao",        nome:"Atenção"},
-  {id:"justificativas", nome:"Consolidado de restos a pagar"},
+  {id:"justificativas", nome:"Restos a pagar"},
 ];
 
 const S = {
   db:null, canEdit:false, wrote:false,
   config:null, pis:[], demandas:[], rp:[], destaque:[], restos:[], comentarios:[],
   user:null, meuId:null, nomes:{},
-  tab:"painel", mod:"consolidado", filtroPi:null, filtroFase:null, editId:null, ready:false,
+  tab:"painel", mod:"consolidado", filtroPi:null, filtroFase:null,
+  filtroMeio:null, filtroPrazo:null, editId:null, ready:false,
 };
 try { const m = localStorage.getItem("chn4.mod"); if (m && MODULOS.some(x => x.id === m)) S.mod = m; } catch (e) {}
 
@@ -950,12 +971,50 @@ function renderDestaque() {
 /* ───────────────────────────── painel: restos a pagar, nota a nota ───────────────────────────── */
 const COL_RP = ["Meio","Plano interno","NE","Justificativa","Prazo","A pagar"];
 
+/* ordem fixa dos meios, pedida pela Divisão: o Centro primeiro, depois os navios */
+const ORDEM_MEIOS = ["84510","84513","84514","84515","84516"];
+const ordemMeio = u => { const i = ORDEM_MEIOS.indexOf(u); return i < 0 ? ORDEM_MEIOS.length : i; };
+
+function restosFiltrados() {
+  return (S.restos || []).filter(r =>
+    (!S.filtroMeio || r.ugr === S.filtroMeio) &&
+    (!S.filtroPrazo || r.prazo === S.filtroPrazo));
+}
+
+function renderChipsRp() {
+  const host = $("chips-rp"); if (!host) return;
+  host.textContent = "";
+  const L = S.restos || [];
+  const MEIOS = (S.config && S.config.meios) || {};
+  const mk = (label, on, fn, n) => {
+    const b = el("button","chip"); b.type = "button";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.append(document.createTextNode(label));
+    if (n != null) b.append(Object.assign(el("span","n"),{textContent:n}));
+    b.addEventListener("click", fn); host.append(b);
+  };
+  mk("Todas", !S.filtroMeio && !S.filtroPrazo,
+     () => { S.filtroMeio = null; S.filtroPrazo = null; render(); }, L.length);
+
+  const porMeio = new Map();
+  L.forEach(r => porMeio.set(r.ugr, (porMeio.get(r.ugr) || 0) + 1));
+  [...porMeio.keys()].sort((a,b) => ordemMeio(a) - ordemMeio(b) || (a < b ? -1 : 1))
+    .forEach(u => mk((MEIOS[u] && MEIOS[u].sigla) || `UGR ${u}`, S.filtroMeio === u,
+      () => { S.filtroMeio = S.filtroMeio === u ? null : u; render(); }, porMeio.get(u)));
+
+  const porPrazo = new Map();
+  L.forEach(r => porPrazo.set(r.prazo, (porPrazo.get(r.prazo) || 0) + 1));
+  if (porPrazo.size > 1)
+    [...porPrazo.keys()].sort().forEach(p => mk(p, S.filtroPrazo === p,
+      () => { S.filtroPrazo = S.filtroPrazo === p ? null : p; render(); }, porPrazo.get(p)));
+}
+
 function renderRestos() {
-  const L = (S.restos || []).slice().sort((a,b) =>
-    a.ugr === b.ugr ? safe(b.valor) - safe(a.valor) : (a.ugr < b.ugr ? -1 : 1));
+  const L = restosFiltrados().sort((a,b) =>
+    a.ugr === b.ugr ? safe(b.valor) - safe(a.valor) : ordemMeio(a.ugr) - ordemMeio(b.ugr));
   const t = $("tbl-rp"); t.textContent = "";
-  $("card-rp-det").hidden = L.length === 0;
-  if (!L.length) return;
+  $("card-rp-det").hidden = (S.restos || []).length === 0;
+  renderChipsRp();
 
   const MEIOS = (S.config && S.config.meios) || {};
   const thead = el("thead"), tr = el("tr");
@@ -978,6 +1037,12 @@ function renderRestos() {
     linha.append(el("td","r num", brl(r.valor)));
     tb.append(linha);
   }
+  if (!L.length) {
+    const linha = el("tr");
+    const td = el("td", null, "Nenhuma nota com os filtros atuais.");
+    td.colSpan = COL_RP.length; td.style.color = "var(--muted)";
+    linha.append(td); tb.append(linha);
+  }
   t.append(tb);
   const tot = L.reduce((s,r) => s + safe(r.valor), 0);
   $("rp-det-tot").textContent = `${L.length} ${L.length === 1 ? "nota" : "notas"} · ${brl0(tot)} a pagar`;
@@ -988,12 +1053,6 @@ function renderJustificativas() {
   const host = $("just-lista"); host.textContent = "";
   const L = S.restos || [];
   const MEIOS = (S.config && S.config.meios) || {};
-  if (!L.length) {
-    host.append(Object.assign(el("div","alert"),
-      {textContent:"Nenhum resto a pagar registrado na planilha."}));
-    $("just-count").textContent = "";
-    return;
-  }
 
   const porUgr = new Map();
   for (const r of L) {
@@ -1006,31 +1065,40 @@ function renderJustificativas() {
     if (r.ne) o.nes.push(neCurto(r.ne));
   }
 
-  const ordem = [...porUgr.entries()].map(([ugr, m]) => {
-    const linhas = [...m.values()].sort((a,b) => b.valor - a.valor);
-    return {ugr, linhas, total: linhas.reduce((s,x) => s + x.valor, 0),
-            n: linhas.reduce((s,x) => s + x.n, 0)};
-  }).sort((a,b) => b.total - a.total);
+  /* ordem fixa: CHN-4, Garnier Sampaio, Castelo, Tocantins, Xingu —
+     os meios sem restos continuam aparecendo, zerados. */
+  const ugrs = ORDEM_MEIOS.slice();
+  [...porUgr.keys()].forEach(u => { if (!ugrs.includes(u)) ugrs.push(u); });
 
-  for (const g of ordem) {
-    const card = el("div","card"); card.style.marginBottom = "18px";
+  let total = 0, nMeios = 0;
+  for (const ugr of ugrs) {
+    const m = porUgr.get(ugr);
+    const linhas = m ? [...m.values()].sort((a,b) => b.valor - a.valor) : [];
+    const tot = linhas.reduce((s,x) => s + x.valor, 0);
+    const n = linhas.reduce((s,x) => s + x.n, 0);
+    total += tot; if (n) nMeios++;
+
+    const card = el("div", "card " + (ugr === "84510" ? "m-chn" : "m-nav"));
     const h = el("div","card-h");
-    h.append(el("h3", null, (MEIOS[g.ugr] && MEIOS[g.ugr].sigla) || `UGR ${g.ugr}`),
-             el("span","sub", `${g.n} ${g.n === 1 ? "nota" : "notas"} · ${brl0(g.total)} a pagar`));
+    h.append(el("h3", null, (MEIOS[ugr] && MEIOS[ugr].sigla) || `UGR ${ugr}`),
+             el("span","sub", n ? `${n} ${n === 1 ? "nota" : "notas"} · ${brl0(tot)}` : "—"));
     card.append(h);
     const pad = el("div","card-pad");
-    hbars(pad, g.linhas.map(x => ({
+    if (!linhas.length) pad.append(el("div","vazio","Sem restos a pagar."));
+    else hbars(pad, linhas.map(x => ({
       label: x.justificativa,
       sub: `${x.prazo} · ${x.n} ${x.n === 1 ? "nota" : "notas"}`,
       valor: x.valor,
       color: "var(--stage-1)",
       title: x.nes.length ? "NE " + x.nes.join(" · ") : null,
-    })), g.total);
+    })), tot);
     card.append(pad);
     host.append(card);
   }
-  const tot = ordem.reduce((s,g) => s + g.total, 0);
-  $("just-count").textContent = `${L.length} notas em ${ordem.length} ${ordem.length === 1 ? "meio" : "meios"} · ${brl0(tot)}`;
+
+  $("just-count").textContent = L.length
+    ? `${L.length} ${L.length === 1 ? "nota" : "notas"} em ${nMeios} ${nMeios === 1 ? "meio" : "meios"} · ${brl0(total)} a pagar`
+    : "Nenhum resto a pagar registrado na planilha.";
 }
 
 /* ───────────────────────────── painel: alertas ───────────────────────────── */
