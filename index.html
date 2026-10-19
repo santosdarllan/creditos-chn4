@@ -750,23 +750,28 @@ function derive() {
 
   pis.forEach(p => { const o = byPi.get(p.pi) || {alocado:0,semDestino:0,semInfo:0,n:0}; Object.assign(p, o, {saldo: safe(p.provisionado) - safe(p.empenhado)}); });
 
-  // planos internos que o painel apresenta juntos (ex.: as três Sobras Lícitas)
+  // planos internos que o painel apresenta juntos: linhas de mesma descrição
   const gDe = new Map();
   const gidx = new Map();
   const grupos = [];
   for (const p of pis) {
-    const gid = p.grupo || p.pi;
+    const gid = p.chave || p.pi;
     gDe.set(p.pi, gid);
     let g = gidx.get(gid);
     if (!g) {
-      g = {id:gid, nome:p.grupo || p.descricao, pis:[], provisionado:0, empenhado:0,
+      g = {id:gid, nome:p.descricao, descFolha:p.descFolha, pis:[], provisionado:0, empenhado:0,
            liquidado:0, pago:0, alocado:0, semDestino:0, semInfo:0, n:0};
       gidx.set(gid, g); grupos.push(g);
     }
     g.pis.push(p.pi);
     for (const f of ["provisionado","empenhado","liquidado","pago","alocado","semDestino","semInfo","n"]) g[f] += safe(p[f]);
   }
-  grupos.forEach(g => { g.saldo = g.provisionado - g.empenhado; });
+  /* com mais de um PI no grupo, o nome vem da descrição da planilha — o apelido
+     de um código só valeria para uma das linhas */
+  grupos.forEach(g => {
+    if (g.pis.length > 1 && g.descFolha) g.nome = nomePlano(g.descFolha);
+    g.saldo = g.provisionado - g.empenhado;
+  });
   grupos.sort((a,b) => b.provisionado - a.provisionado);
 
   // distribuição da Manutenção Corrente: o residual fica com a própria CHN-4
@@ -959,10 +964,23 @@ function renderDestaque() {
   tiles("tiles-dest", S5);
   $("dest-nota").textContent = prov > 0 ? "" : "Nenhum crédito destacado no exercício até agora";
 
-  const rows = L.filter(p => safe(p.provisionado) > 0 || safe(p.empenhado) > 0)
-    .sort((a,b) => safe(b.provisionado) - safe(a.provisionado))
-    .map(p => ({label:p.descricao, sub:p.pi, valor:safe(p.provisionado), color:"var(--stage-1)",
-                title:`${p.descricao}\n${p.pi}\nProvisionado ${brl(p.provisionado)}\nEmpenhado ${brl(p.empenhado)}`}));
+  /* mesmas linhas de descrição igual aparecem como um plano só, como na consolidada */
+  const gx = new Map();
+  for (const p of L) {
+    const k = p.chave || p.pi;
+    let g = gx.get(k);
+    if (!g) { g = {nome:p.descricao, descFolha:p.descFolha, pis:[], provisionado:0, empenhado:0}; gx.set(k, g); }
+    g.pis.push(p.pi);
+    g.provisionado += safe(p.provisionado); g.empenhado += safe(p.empenhado);
+  }
+  const rows = [...gx.values()]
+    .map(g => (g.pis.length > 1 && g.descFolha ? {...g, nome:nomePlano(g.descFolha)} : g))
+    .filter(g => g.provisionado > 0 || g.empenhado > 0)
+    .sort((a,b) => b.provisionado - a.provisionado)
+    .map(g => ({label:g.nome,
+                sub: g.pis.length > 1 ? g.pis.join(" · ") : g.pis[0],
+                valor:g.provisionado, color:"var(--stage-1)",
+                title:`${g.nome}\n${g.pis.join(" · ")}\nProvisionado ${brl(g.provisionado)}\nEmpenhado ${brl(g.empenhado)}`}));
   $("card-dest-pi").hidden = rows.length === 0;
   hbars($("chart-dest-pi"), rows, prov);
   $("dest-pi-tot").textContent = brl0(prov);
@@ -1488,7 +1506,18 @@ const NOMES = {
   Z4C3SLN01L0:"Sobras Lícitas – Municiamento", Z4F9014Z1B4:"Manutenção e Recuperação de PNR",
   L475DP0Z2KX:"Diárias de Pessoal", B44101002DD:"Alimentação de Pessoal",
 };
-const GRUPO = {L46301001KX:"Auxílios à Navegação", L463010Z1L0:"Auxílios à Navegação"};
+/* Agrupamento automático: duas linhas da planilha que tragam a MESMA descrição de
+   PI formam um plano só, qualquer que seja o código. Acento, caixa e pontuação não
+   contam, então "AUXÍLIOS À NAVEGAÇÃO" e "Auxilios a Navegacao" caem no mesmo
+   grupo. Linha sem descrição fica sozinha, sob o próprio código. */
+const chaveDesc = s => tidy(s).normalize("NFD").replace(/[̀-ͯ]/g, "")
+                         .toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+/* nome de plano em caixa de título, com as preposições em minúscula */
+const MINUS = new Set(["De","Da","Do","Das","Dos","E","A","À","Ao","Aos","Às","As",
+                       "Em","No","Na","Nos","Nas","Para","Por","Com","Sem","Ou"]);
+const nomePlano = s => titulo(s).split(" ")
+  .map((w,i) => i && MINUS.has(w) ? w.toLowerCase() : w).join(" ");
 const PAI = {
   L46301002KX:"L46301001KX", B441MRZ02DD:"B441MRZ0100", B4D2FC3Z2KX:"B4D2FC302KX",
   P4HNGS002KX:"P4HNZZ002KX", P4HNTC002KX:"P4HNZZ002KX",
@@ -1548,7 +1577,9 @@ function lerDestaque(linhas) {
     if (/^TOTAL/i.test(bruto) || /%/.test(bruto)) break;
     const cod = norm(bruto);
     if (!cod) continue;
-    pis.push({pi:cod, descricao: NOMES[cod] || titulo(r[3]) || cod,
+    const desc = tidy(r[3]);
+    pis.push({pi:cod, descricao: NOMES[cod] || nomePlano(desc) || cod,
+              descFolha:desc, chave: chaveDesc(desc) || cod,
               uge:tidy(r[0]), ugr:tidy(r[1]),
               provisionado:num(r[4]), empenhado:num(r[6]),
               liquidado:num(r[7]), pago:num(r[8])});
@@ -1582,10 +1613,11 @@ function lerCreditos(linhas) {
   for (let i = h + 1; i < linhas.length; i++) {
     const r = linhas[i], cod = norm(r[4]);
     if (!cod) { if (/TOTAL/i.test(r[0] || "")) break; else continue; }
+    const desc = tidy(r[5]);
     pis.push({
-      pi: cod, descricao: NOMES[cod] || titulo(r[5]) || cod,
+      pi: cod, descricao: NOMES[cod] || nomePlano(desc) || cod,
+      descFolha: desc, chave: chaveDesc(desc) || cod,
       tipo: tidy(r[0]) || "LOA MB", uge: tidy(r[1]), ugr: tidy(r[2]), uo: tidy(r[3]),
-      grupo: GRUPO[cod] || (cod.startsWith("Z4C3SL") ? "Sobras Lícitas" : null),
       provisionado: num(r[6]), empenhado: num(r[8]),
       liquidado: num(r[9]), pago: num(r[10]),
     });
