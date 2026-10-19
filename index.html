@@ -21,6 +21,10 @@
   --pontos:#d9ebe3;
   --s-good:#0ca30c;     --s-warn:#fab219;     --s-serious:#ec835a;  --s-crit:#d03b3b;
   --s-good-ink:#006300; --s-warn-ink:#8a5c00; --s-crit-ink:#a52222;
+  /* situação das metas — trio validado contra fundo branco (banda de luminância,
+     separação para daltonismo e contraste ≥ 3:1) */
+  --st-pend:#c62828;    --st-and:#b08a00;     --st-fim:#0f7a5a;
+  --st-pend-ink:#9b1f1f; --st-and-ink:#7a5f00; --st-fim-ink:#0b5a42;
   --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300;
   --c7:#4a3aa7; --c8:#e34948;
   --shadow:0 1px 2px rgba(10,87,65,.05), 0 8px 22px -18px rgba(10,87,65,.22);
@@ -123,9 +127,9 @@ button{font:inherit; color:inherit; cursor:pointer}
   font-size:11px; font-weight:600; letter-spacing:.02em; border:1px solid var(--ring);
 }
 .pill .dot{width:7px; height:7px; border-radius:50%; flex:none}
-.pill.good{color:var(--s-good-ink); background:color-mix(in srgb,var(--s-good) 12%,transparent)}
-.pill.warn{color:var(--s-warn-ink); background:color-mix(in srgb,var(--s-warn) 16%,transparent)}
-.pill.crit{color:var(--s-crit-ink); background:color-mix(in srgb,var(--s-crit) 12%,transparent)}
+.pill.good{color:var(--st-fim-ink);  background:color-mix(in srgb,var(--st-fim) 13%,transparent)}
+.pill.warn{color:var(--st-and-ink);  background:color-mix(in srgb,var(--st-and) 18%,transparent)}
+.pill.crit{color:var(--st-pend-ink); background:color-mix(in srgb,var(--st-pend) 13%,transparent)}
 .pill.neutral{color:var(--ink-2); background:var(--surface-2)}
 
 /* ───────────────────────────── alerts ───────────────────────────── */
@@ -465,6 +469,29 @@ textarea{min-height:62px; resize:vertical}
       </div>
     </section>
 
+    <section class="sec" data-mod="destaque">
+      <div class="sec-head">
+        <span class="eyebrow">Exercício <span id="ex-2">—</span></span>
+        <h2>Destaque de créditos</h2>
+        <span class="note" id="dest-nota"></span>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <h3>Acompanhamento dos créditos</h3>
+          <span class="sub">Valores em reais (R$)</span>
+        </div>
+        <div class="card-pad">
+          <div class="cc-desk"><div class="cc" id="chart-destaque"></div></div>
+          <div class="cc-mob"><div class="hb" id="chart-destaque-mob"></div></div>
+        </div>
+      </div>
+      <div class="tiles" id="tiles-dest" style="margin-top:18px"></div>
+      <div class="card" style="margin-top:18px" id="card-dest-pi">
+        <div class="card-h"><h3>Por plano interno</h3><span class="sub" id="dest-pi-tot"></span></div>
+        <div class="card-pad"><div class="hb" id="chart-dest-pi"></div></div>
+      </div>
+    </section>
+
     <section class="sec" data-mod="atencao" id="sec-alertas">
       <div class="sec-head">
         <span class="eyebrow">Atenção</span>
@@ -516,17 +543,25 @@ textarea{min-height:62px; resize:vertical}
     <section class="sec" data-mod="andamento">
       <div class="sec-head">
         <span class="eyebrow">Andamento</span>
-        <h2>Situação das demandas</h2>
+        <h2>Situação das metas</h2>
       </div>
       <div class="pair">
         <div class="card">
-          <div class="card-h"><h3>Por fase do processo</h3><span class="sub" id="fase-tot"></span></div>
+          <div class="card-h"><h3>Por situação</h3><span class="sub" id="fase-tot"></span></div>
           <div class="card-pad"><div class="hb" id="chart-fase"></div></div>
         </div>
         <div class="card" id="card-rp">
           <div class="card-h"><h3>Restos a pagar</h3><span class="sub" id="rp-tot"></span></div>
           <div class="card-pad"><div class="hb" id="chart-rp"></div></div>
         </div>
+      </div>
+
+      <div class="card" style="margin-top:18px" id="card-rp-det">
+        <div class="card-h">
+          <h3>Restos a pagar — nota a nota</h3>
+          <span class="sub" id="rp-det-tot"></span>
+        </div>
+        <div class="tblwrap"><table id="tbl-rp"></table></div>
       </div>
     </section>
 
@@ -540,6 +575,15 @@ textarea{min-height:62px; resize:vertical}
         <div class="chips" id="chips"></div>
         <div class="tblwrap"><table id="tbl-dem"></table></div>
       </div>
+    </section>
+
+    <section class="sec" data-mod="justificativas">
+      <div class="sec-head">
+        <span class="eyebrow">Justificativas e prazos</span>
+        <h2>Consolidado de restos a pagar</h2>
+        <span class="note" id="just-count"></span>
+      </div>
+      <div id="just-lista"></div>
     </section>
 
     <div class="foot">
@@ -576,32 +620,38 @@ const dmyhm = iso => { if (!iso) return "—"; const d = new Date(iso.length <= 
 function neCurto(v) {
   if (!v) return null;
   const partes = String(v).split(/[\s;,/]+/).map(s => s.trim()).filter(Boolean).map(s => {
-    const m = s.match(/^\d{4}\s*NE\s*0*(\d+)$/i);
+    const m = s.match(/NE\s*0*(\d+)\s*$/i);
     return m ? m[1] : s;
   });
   return partes.join("\n") || null;
 }
 
-const FASES = ["Sem informação","Previsto","Aguardando","Em análise","Enviado","Processada","Empenhado","Liquidado","Pago"];
-const FASE_PUB = {"Sem informação":"A classificar"};
-const faseLabel = f => FASE_PUB[f] || f;
+/* três situações na planilha; "A classificar" recolhe o que vier em branco ou fora do padrão */
+const SEM_SIT = "A classificar";
+const FASES = ["Pendente","Em andamento","Finalizado",SEM_SIT];
+const FASE_COR = {"Pendente":"var(--st-pend)","Em andamento":"var(--st-and)",
+                  "Finalizado":"var(--st-fim)",[SEM_SIT]:"var(--muted)"};
+const FASE_PILL = {"Pendente":"crit","Em andamento":"warn","Finalizado":"good",[SEM_SIT]:"neutral"};
+const faseLabel = f => f;
 const SERIES = ["--c1","--c2","--c3","--c4","--c5","--c6"];
 /* ordem com o verde à frente, verificada para daltonismo nos dois temas */
 const SERIES8 = ["--c3","--c2","--c1","--c4","--c5","--c6","--c7","--c8"];
 
 /* ───────────────────────────── state ───────────────────────────── */
 const MODULOS = [
-  {id:"consolidado", nome:"Posição consolidada"},
-  {id:"demandas",    nome:"Metas de execução"},
-  {id:"pi",          nome:"Sem metas definidas"},
-  {id:"destinacao",  nome:"Destinação"},
-  {id:"andamento",   nome:"Andamento"},
-  {id:"atencao",     nome:"Atenção"},
+  {id:"consolidado",    nome:"Posição consolidada"},
+  {id:"destaque",       nome:"Destaque de créditos"},
+  {id:"demandas",       nome:"Metas de execução"},
+  {id:"pi",             nome:"Sem metas definidas"},
+  {id:"destinacao",     nome:"Destinação"},
+  {id:"andamento",      nome:"Andamento"},
+  {id:"atencao",        nome:"Atenção"},
+  {id:"justificativas", nome:"Consolidado de restos a pagar"},
 ];
 
 const S = {
   db:null, canEdit:false, wrote:false,
-  config:null, pis:[], demandas:[], rp:[], comentarios:[],
+  config:null, pis:[], demandas:[], rp:[], destaque:[], restos:[], comentarios:[],
   user:null, meuId:null, nomes:{},
   tab:"painel", mod:"consolidado", filtroPi:null, filtroFase:null, editId:null, ready:false,
 };
@@ -668,12 +718,12 @@ function derive() {
   for (const d of ativas) {
     const v = safe(d.valor);
     const key = d.piPai || d.pi;
-    if (byPi.has(key)) { const o = byPi.get(key); o.alocado += v; o.n++; if (d.semDestino) o.semDestino += v; if (d.situacao === "Sem informação") o.semInfo += v; }
-    const f = FASES.includes(d.situacao) ? d.situacao : "Sem informação";
+    if (byPi.has(key)) { const o = byPi.get(key); o.alocado += v; o.n++; if (d.semDestino) o.semDestino += v; if (d.situacao === SEM_SIT) o.semInfo += v; }
+    const f = FASES.includes(d.situacao) ? d.situacao : SEM_SIT;
     const fo = byFase.get(f); fo.valor += v; fo.n++;
     if (d.nd) byNd.set(d.nd, safe(byNd.get(d.nd)) + v);
     if (d.semDestino) semDestino += v;
-    if (f === "Sem informação") semInfo += v; else comSit += v;
+    if (f === SEM_SIT) semInfo += v; else comSit += v;
     if (key === "P4HNZZ002KX" && d.ugr && d.ugr !== "84510") byUgrMnt.set(d.ugr, safe(byUgrMnt.get(d.ugr)) + v);
   }
 
@@ -701,14 +751,19 @@ function derive() {
   // distribuição da Manutenção Corrente: o residual fica com a própria CHN-4
   const mnt = pis.find(p => p.pi === "P4HNZZ002KX");
   const meios = [];
+  let mntExcesso = 0;
   if (mnt) {
     const somaMeios = [...byUgrMnt.values()].reduce((a,b) => a + b, 0);
-    meios.push({ugr:"84510", valor: safe(mnt.provisionado) - somaMeios});
+    const residual = safe(mnt.provisionado) - somaMeios;
+    /* lançamentos dos meios acima do crédito: a fatia do Centro para em zero,
+       nunca negativa, e o excedente vira alerta em vez de sumir calado */
+    mntExcesso = residual < 0 ? -residual : 0;
+    meios.push({ugr:"84510", valor: Math.max(0, residual)});
     ["84513","84514","84515","84516"].forEach(u => { if (byUgrMnt.has(u)) meios.push({ugr:u, valor:byUgrMnt.get(u)}); });
     byUgrMnt.forEach((v,u) => { if (!meios.some(m => m.ugr === u)) meios.push({ugr:u, valor:v}); });
   }
 
-  const empMarcado = byFase.get("Empenhado").valor + byFase.get("Liquidado").valor + byFase.get("Pago").valor;
+  const empMarcado = byFase.get("Finalizado").valor;
   const ex = (S.config && S.config.exercicio) || new Date().getFullYear();
   const mdTxt = (S.config && S.config.metaData) || "30SET";
   const alvo = dataMeta(ex, mdTxt);
@@ -718,9 +773,9 @@ function derive() {
   return {
     pis, grupos, gDe, ativas, excluidas, prov, emp, liq, pag, saldo,
     semDestino, semInfo, comSit, empMarcado,
-    byFase, byNd, meios, dias, metaData: mdTxt,
+    byFase, byNd, meios, mntExcesso, dias, metaData: mdTxt,
     nTotal: ativas.length,
-    nComSit: ativas.filter(d => d.situacao && d.situacao !== "Sem informação").length,
+    nComSit: ativas.filter(d => d.situacao && d.situacao !== SEM_SIT).length,
     metas: (S.config && S.config.metas) || {empenhado:.8, liquidado:.7, pago:.6},
   };
 }
@@ -738,9 +793,9 @@ function series(D) {
   ].map(s => ({...s, share: p ? safe(s.v) / p : 0}));
 }
 
-function renderTiles(D) {
-  const host = $("tiles"); host.textContent = "";
-  for (const s of series(D)) {
+function tiles(hostId, S5) {
+  const host = $(hostId); host.textContent = "";
+  for (const s of S5) {
     const lead = s.k === "Provisionado" || s.k === "Disponível";
     const n = el("div", "tile" + (lead ? " lead" : ""));
     n.append(el("div","k",s.k), el("div","v",brl0(s.v)));
@@ -749,6 +804,10 @@ function renderTiles(D) {
     n.append(m);
     host.append(n);
   }
+}
+
+function renderTiles(D) {
+  tiles("tiles", series(D));
   const p = $("prazo-nota");
   p.textContent = D.dias >= 0
     ? `Faltam ${D.dias} ${D.dias === 1 ? "dia" : "dias"} para ${D.metaData}`
@@ -811,9 +870,12 @@ function niceMax(v) {
   return mag * 10;
 }
 
-function renderConsolidado(D) {
-  const host = $("chart-consolidado"); host.textContent = "";
-  const S5 = series(D);
+function renderConsolidado(D) { colunas("chart-consolidado", "chart-consolidado-mob", series(D),
+  "Provisionado é o total do exercício; disponível e empenhado o repartem. Liquidado está contido no empenhado, e pago no liquidado."); }
+
+/* gráfico de colunas do acompanhamento — serve à posição consolidada e ao destaque */
+function colunas(hostId, mobId, S5, nota) {
+  const host = $(hostId); host.textContent = "";
   const ALT = 260, TICKS = 4;
   const max = niceMax(Math.max(...S5.map(s => safe(s.v)), 1) * 1.1);
   host.style.setProperty("--h", ALT + "px");
@@ -848,16 +910,128 @@ function renderConsolidado(D) {
     names.append(n);
   }
   host.append(names);
-  host.append(el("div","cc-note",
-    "Provisionado é o total do exercício; disponível e empenhado o repartem. Liquidado está contido no empenhado, e pago no liquidado."));
+  if (nota) host.append(el("div","cc-note", nota));
 
   // mesma informação em barras horizontais, para telas estreitas
-  hbars($("chart-consolidado-mob"), S5.map(s => ({
+  hbars($(mobId), S5.map(s => ({
     label:s.k, sub:s.k === "Provisionado" ? "total do exercício" : `${pct(s.share)} do provisionado`,
     valor:safe(s.v), color:s.cor,
   })), null);
 }
 
+
+/* ───────────────────────────── painel: destaque de créditos ───────────────────────────── */
+function renderDestaque() {
+  const L = S.destaque || [];
+  const T = f => L.reduce((s,p) => s + safe(p[f]), 0);
+  const prov = T("provisionado"), emp = T("empenhado");
+  const S5 = [
+    {k:"Provisionado", v:prov,       cor:"var(--total)",   m:`${L.length} ${L.length === 1 ? "plano interno" : "planos internos"}`},
+    {k:"Disponível",   v:prov - emp, cor:"var(--disp)",    m:"ainda por comprometer"},
+    {k:"Empenhado",    v:emp,        cor:"var(--stage-1)", m:"do provisionado"},
+    {k:"Liquidado",    v:T("liquidado"), cor:"var(--stage-2)", m:"do provisionado"},
+    {k:"Pago",         v:T("pago"),      cor:"var(--stage-3)", m:"do provisionado"},
+  ].map(s => ({...s, share: prov ? safe(s.v) / prov : 0}));
+
+  colunas("chart-destaque", "chart-destaque-mob", S5,
+    "Créditos recebidos por destaque, fora da provisão da LOA. Disponível e empenhado repartem o provisionado; liquidado está contido no empenhado, e pago no liquidado.");
+  tiles("tiles-dest", S5);
+  $("dest-nota").textContent = prov > 0 ? "" : "Nenhum crédito destacado no exercício até agora";
+
+  const rows = L.filter(p => safe(p.provisionado) > 0 || safe(p.empenhado) > 0)
+    .sort((a,b) => safe(b.provisionado) - safe(a.provisionado))
+    .map(p => ({label:p.descricao, sub:p.pi, valor:safe(p.provisionado), color:"var(--stage-1)",
+                title:`${p.descricao}\n${p.pi}\nProvisionado ${brl(p.provisionado)}\nEmpenhado ${brl(p.empenhado)}`}));
+  $("card-dest-pi").hidden = rows.length === 0;
+  hbars($("chart-dest-pi"), rows, prov);
+  $("dest-pi-tot").textContent = brl0(prov);
+}
+
+/* ───────────────────────────── painel: restos a pagar, nota a nota ───────────────────────────── */
+const COL_RP = ["Meio","Plano interno","NE","Justificativa","Prazo","A pagar"];
+
+function renderRestos() {
+  const L = (S.restos || []).slice().sort((a,b) =>
+    a.ugr === b.ugr ? safe(b.valor) - safe(a.valor) : (a.ugr < b.ugr ? -1 : 1));
+  const t = $("tbl-rp"); t.textContent = "";
+  $("card-rp-det").hidden = L.length === 0;
+  if (!L.length) return;
+
+  const MEIOS = (S.config && S.config.meios) || {};
+  const thead = el("thead"), tr = el("tr");
+  COL_RP.forEach((c,i) => tr.append(el("th", i === COL_RP.length - 1 ? "r" : null, c)));
+  thead.append(tr); t.append(thead);
+
+  const tb = el("tbody");
+  for (const r of L) {
+    const linha = el("tr");
+    linha.append(el("td", null, (MEIOS[r.ugr] && MEIOS[r.ugr].sigla) || r.ugr));
+    const tdPi = el("td", null, r.descPi || r.pi || "—"); tdPi.title = r.pi || "";
+    linha.append(tdPi);
+    const tdNe = el("td","mono", neCurto(r.ne) || "—");
+    if (r.ne) tdNe.title = String(r.ne);
+    linha.append(tdNe);
+    const tdJ = el("td","desc", r.justificativa);
+    if (r.objeto) tdJ.title = r.objeto;
+    linha.append(tdJ);
+    linha.append(el("td", null, r.prazo));
+    linha.append(el("td","r num", brl(r.valor)));
+    tb.append(linha);
+  }
+  t.append(tb);
+  const tot = L.reduce((s,r) => s + safe(r.valor), 0);
+  $("rp-det-tot").textContent = `${L.length} ${L.length === 1 ? "nota" : "notas"} · ${brl0(tot)} a pagar`;
+}
+
+/* ───────────────────────────── painel: justificativas e prazos ───────────────────────────── */
+function renderJustificativas() {
+  const host = $("just-lista"); host.textContent = "";
+  const L = S.restos || [];
+  const MEIOS = (S.config && S.config.meios) || {};
+  if (!L.length) {
+    host.append(Object.assign(el("div","alert"),
+      {textContent:"Nenhum resto a pagar registrado na planilha."}));
+    $("just-count").textContent = "";
+    return;
+  }
+
+  const porUgr = new Map();
+  for (const r of L) {
+    if (!porUgr.has(r.ugr)) porUgr.set(r.ugr, new Map());
+    const m = porUgr.get(r.ugr);
+    const k = r.justificativa + " §§ " + r.prazo;
+    if (!m.has(k)) m.set(k, {justificativa:r.justificativa, prazo:r.prazo, valor:0, n:0, nes:[]});
+    const o = m.get(k);
+    o.valor += safe(r.valor); o.n++;
+    if (r.ne) o.nes.push(neCurto(r.ne));
+  }
+
+  const ordem = [...porUgr.entries()].map(([ugr, m]) => {
+    const linhas = [...m.values()].sort((a,b) => b.valor - a.valor);
+    return {ugr, linhas, total: linhas.reduce((s,x) => s + x.valor, 0),
+            n: linhas.reduce((s,x) => s + x.n, 0)};
+  }).sort((a,b) => b.total - a.total);
+
+  for (const g of ordem) {
+    const card = el("div","card"); card.style.marginBottom = "18px";
+    const h = el("div","card-h");
+    h.append(el("h3", null, (MEIOS[g.ugr] && MEIOS[g.ugr].sigla) || `UGR ${g.ugr}`),
+             el("span","sub", `${g.n} ${g.n === 1 ? "nota" : "notas"} · ${brl0(g.total)} a pagar`));
+    card.append(h);
+    const pad = el("div","card-pad");
+    hbars(pad, g.linhas.map(x => ({
+      label: x.justificativa,
+      sub: `${x.prazo} · ${x.n} ${x.n === 1 ? "nota" : "notas"}`,
+      valor: x.valor,
+      color: "var(--stage-1)",
+      title: x.nes.length ? "NE " + x.nes.join(" · ") : null,
+    })), g.total);
+    card.append(pad);
+    host.append(card);
+  }
+  const tot = ordem.reduce((s,g) => s + g.total, 0);
+  $("just-count").textContent = `${L.length} notas em ${ordem.length} ${ordem.length === 1 ? "meio" : "meios"} · ${brl0(tot)}`;
+}
 
 /* ───────────────────────────── painel: alertas ───────────────────────────── */
 function renderAlerts(D) {
@@ -885,7 +1059,21 @@ function renderAlerts(D) {
       add("warn", `${p.nome}: destino a regularizar`,
         `${brl0(p.semDestino)} sem metas definidas, mas o disponível do plano é de apenas ${brl(p.saldo)} — parte já foi empenhada sem objeto registrado.`,
         brl0(p.semDestino));
+    /* lançamentos acima do crédito do plano — pega lançamento repetido e
+       crédito recebido que ainda não entrou na planilha */
+    const excesso = safe(p.alocado) - safe(p.provisionado);
+    const piso = Math.max(1, safe(p.provisionado) * 0.001);
+    if (excesso > piso)
+      add("serious", `${p.nome}: lançamentos acima do crédito`,
+        `As metas registradas somam ${brl(p.alocado)} contra ${brl(p.provisionado)} de crédito — ${brl(excesso)} a mais. `
+        + `Verifique se há lançamento repetido na planilha ou crédito já recebido que ainda não foi registrado.`,
+        brl0(excesso));
   });
+
+  if (safe(D.mntExcesso) > 1) add("serious", "Manutenção Corrente: lançamentos dos meios acima do crédito",
+    `Os lançamentos dos meios somam ${brl(D.mntExcesso)} a mais que o crédito do plano. `
+    + `Por isso a fatia do CHN-4 na distribuição por meio está zerada — o valor do Centro é o que sobra depois dos meios.`,
+    brl0(D.mntExcesso));
 
   const rpAberto = S.rp.filter(r => r.aberto).reduce((s,r) => s + safe(r.valor), 0);
   if (rpAberto > 0) add("warn", "Restos a pagar em aberto",
@@ -1077,19 +1265,16 @@ function renderDestinacao(D) {
 }
 
 function renderAndamento(D) {
-  const FCOR = {"Sem informação":"var(--muted)","Previsto":"var(--c2)","Aguardando":"var(--c3)",
-                "Em análise":"var(--c4)","Enviado":"var(--c5)","Processada":"var(--c6)",
-                "Empenhado":"var(--stage-1)","Liquidado":"var(--stage-2)","Pago":"var(--stage-3)"};
   const rows = FASES.map(f => ({f, ...D.byFase.get(f)})).filter(r => r.n > 0).map(r => ({
-    label:faseLabel(r.f), sub:`${r.n} ${r.n === 1 ? "demanda" : "demandas"}`, valor:r.valor, color:FCOR[r.f],
+    label:faseLabel(r.f), sub:`${r.n} ${r.n === 1 ? "meta" : "metas"}`, valor:r.valor, color:FASE_COR[r.f],
   }));
   const tot = rows.reduce((s,r) => s + r.valor, 0);
   hbars($("chart-fase"), rows, tot);
-  $("fase-tot").textContent = `${D.nTotal} demandas · ${brl0(tot)}`;
+  $("fase-tot").textContent = `${D.nTotal} metas · ${brl0(tot)}`;
 
   const rpRows = S.rp.slice().sort((a,b) => safe(b.valor) - safe(a.valor)).map(r => ({
     label:r.classe, sub:r.aberto ? "em aberto" : "encerrado", valor:safe(r.valor),
-    color:r.aberto ? "var(--s-warn)" : "var(--c3)",
+    color:r.aberto ? "var(--st-and)" : "var(--st-fim)",
   }));
   const rpTot = rpRows.reduce((s,r) => s + r.valor, 0);
   $("card-rp").hidden = rpRows.length === 0;
@@ -1101,7 +1286,7 @@ function renderAndamento(D) {
 function filtradas(D) {
   return D.ativas.filter(d =>
     (!S.filtroPi || (D.gDe.get(d.piPai || d.pi) || d.piPai || d.pi) === S.filtroPi) &&
-    (!S.filtroFase || (FASES.includes(d.situacao) ? d.situacao : "Sem informação") === S.filtroFase)
+    (!S.filtroFase || (FASES.includes(d.situacao) ? d.situacao : SEM_SIT) === S.filtroFase)
   ).sort((a,b) => safe(b.valor) - safe(a.valor));
 }
 function renderChips(D) {
@@ -1144,8 +1329,8 @@ function renderTable(D) {
     r.append(tdNd);
     r.append(el("td","r", brl(d.valor)));
     r.append(el("td","desc", d.descricao || "—"));
-    const tdS = el("td"); const f = FASES.includes(d.situacao) ? d.situacao : "Sem informação";
-    const pl = el("span","pill " + (f === "Sem informação" ? "neutral" : ["Empenhado","Liquidado","Pago"].includes(f) ? "good" : "warn"));
+    const tdS = el("td"); const f = FASES.includes(d.situacao) ? d.situacao : SEM_SIT;
+    const pl = el("span","pill " + (FASE_PILL[f] || "neutral"));
     pl.append(el("span",null,faseLabel(f))); tdS.append(pl); r.append(tdS);
     const tdNe = el("td","mono", neCurto(d.ne) || "—");
     if (d.ne) tdNe.title = String(d.ne).replace(/\n/g, " · ");
@@ -1173,11 +1358,13 @@ function render() {
     $("om-sub").textContent = [c.om, c.divisao].filter(Boolean).join(" · ") || "Divisão de Intendência";
     $("stamp-data").textContent = c.atualizadoEm ? dmyhm(c.atualizadoEm) : "—";
     $("ex-1").textContent = c.exercicio || "—";
+    $("ex-2").textContent = c.exercicio || "—";
     $("foot-gerente").textContent = c.gerente ? `Gerente de crédito: ${c.gerente}` : "";
     $("foot-ug").textContent = [c.uge && "UGE " + c.uge, c.ugr && "UGR " + c.ugr, c.uo && "UO " + c.uo].filter(Boolean).join(" · ");
 
     renderTiles(D); renderConsolidado(D); renderSemMetas(D); renderAlerts(D);
     renderChartPi(D); renderDestinacao(D); renderAndamento(D);
+    renderDestaque(); renderRestos(); renderJustificativas();
     renderChips(D); renderTable(D); renderModNav();
 
     $("view-painel").hidden = false;
@@ -1187,7 +1374,8 @@ function render() {
 
 /* ───────────────────────────── leitura da planilha ───────────────────────────── */
 const PUB = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ71i6iSfEc8aNLtdx-ldBkvogqgQYBdbf03Scuy3mjOd2k6_DbMkMD8ZFBBWh6nTu1pqDz787P9nTt/pub?single=true&output=csv&gid=";
-const GID = {creditos:"29490223", metas:"720560572"};
+const GID = {creditos:"29490223", metas:"720560572",
+             destaque:"1743988624", restos:"155307403"};
 
 /* CSV com campos entre aspas e quebras de linha dentro do campo */
 function parseCSV(t) {
@@ -1241,11 +1429,11 @@ const PAI = {
   P4HNRT0Z2KX:"P4HNZZ002KX", P4HNRX0Z2KX:"P4HNZZ002KX",
 };
 const SIT = {
-  enviado:"Enviado", aguardando:"Aguardando", aguardadando:"Aguardando",
-  empenhado:"Empenhado", analise:"Em análise", "análise":"Em análise",
-  "em analise":"Em análise", "em análise":"Em análise", processada:"Processada",
-  procesada:"Processada", liquidado:"Liquidado", pago:"Pago", previsto:"Previsto",
-  "-":"Sem informação", "":"Sem informação",
+  pendente:"Pendente", pendentes:"Pendente",
+  "em andamento":"Em andamento", andamento:"Em andamento", "em adamento":"Em andamento",
+  finalizado:"Finalizado", finalizada:"Finalizado", finalizados:"Finalizado",
+  concluido:"Finalizado", "concluído":"Finalizado",
+  "-":SEM_SIT, "":SEM_SIT,
 };
 
 const acharCab = linhas => linhas.findIndex(r => (r[4] || "").trim() === "PI" &&
@@ -1278,6 +1466,45 @@ function lerAlvos(linhas) {
     else if (/pag/i.test(t)) metas.pago = v;
   }
   return {metas, data};
+}
+
+/* Destaque de créditos: mesmo quadro da posição consolidada, deslocado duas
+   colunas à direita (UGE, UGR, PI, descrição e os cinco valores). */
+function lerDestaque(linhas) {
+  const h = linhas.findIndex(r => (r[2] || "").trim() === "PI" && /PROVISIONADO/i.test(r[4] || ""));
+  const pis = [];
+  if (h < 0) return pis;
+  for (let i = h + 1; i < linhas.length; i++) {
+    const r = linhas[i], bruto = tidy(r[2]);
+    if (!bruto) continue;
+    if (/^TOTAL/i.test(bruto) || /%/.test(bruto)) break;
+    const cod = norm(bruto);
+    if (!cod) continue;
+    pis.push({pi:cod, descricao: NOMES[cod] || titulo(r[3]) || cod,
+              uge:tidy(r[0]), ugr:tidy(r[1]),
+              provisionado:num(r[4]), empenhado:num(r[6]),
+              liquidado:num(r[7]), pago:num(r[8])});
+  }
+  return pis;
+}
+
+/* Detalhamento dos restos a pagar, nota a nota */
+function lerRestos(linhas) {
+  const h = linhas.findIndex(r => /^UGR$/i.test(tidy(r[0])) && /^PI$/i.test(tidy(r[1])));
+  const out = [];
+  for (let i = (h < 0 ? 1 : h + 1); i < linhas.length; i++) {
+    const r = linhas[i], ugr = tidy(r[0]);
+    if (!ugr || !/^\d+$/.test(ugr)) continue;
+    out.push({
+      ugr: ugr.length === 6 && ugr.startsWith("7") ? ugr.slice(1) : ugr,
+      pi: norm(r[1]), descPi: titulo(r[2]), ne: tidy(r[5]),
+      objeto: tidy(r[6]) || null,
+      inscrito: num(r[7]), valor: num(r[10]),
+      justificativa: tidy(r[13]) || "Sem justificativa registrada",
+      prazo: tidy(r[14]) || "Sem prazo",
+    });
+  }
+  return out;
 }
 
 function lerCreditos(linhas) {
@@ -1315,7 +1542,7 @@ function lerMetas(linhas, pis) {
       ugr: tidy(r[0]) || null, pi: cod, piPai: pai,
       descPi: titulo(r[2]).replace(/\bMnt\b/g, "Manutenção"),
       nd: tidy(r[3]) || null, valor,
-      situacao: SIT[sit] !== undefined ? SIT[sit] : (tidy(r[5]) || "Sem informação"),
+      situacao: SIT[sit] !== undefined ? SIT[sit] : (tidy(r[5]) || SEM_SIT),
       solemp: tidy(r[6]) || null,
       ne: (r[7] && tidy(r[7]) !== "-") ? String(r[7]).trim() : null,
       descricao: desc, obs: tidy(r[9]) || null, excluida: false,
@@ -1354,10 +1581,13 @@ async function carregar() {
     if (!r.ok) throw new Error("HTTP " + r.status);
     return parseCSV(await r.text());
   };
-  const [cred, met] = await Promise.all([busca(GID.creditos), busca(GID.metas)]);
+  const [cred, met, dest, res] = await Promise.all(
+    [busca(GID.creditos), busca(GID.metas), busca(GID.destaque), busca(GID.restos)]);
   S.pis = lerCreditos(cred);
   S.demandas = lerMetas(met, S.pis);
-  S.rp = [];
+  S.destaque = lerDestaque(dest);
+  S.rp = [];                     // classes de restos a pagar não vêm mais do destaque
+  S.restos = lerRestos(res);
   const p0 = S.pis[0] || {};
   const alvos = lerAlvos(cred) || {};
   S.config = Object.assign({}, CONFIG, {
