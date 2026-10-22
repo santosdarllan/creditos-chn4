@@ -203,6 +203,26 @@ tr.stale td{opacity:.6}
 #tbl-dem td:first-child{overflow-wrap:anywhere}
 #tbl-dem td:first-child,#tbl-dem th:first-child{padding-left:14px}
 #tbl-dem td:last-child,#tbl-dem th:last-child{padding-right:14px}
+/* quadro de encerramento: reproduz as células mescladas da planilha */
+/* largura fixa por coluna: o quadro inteiro cabe na tela da reunião, sem rolagem
+   lateral, e as justificativas longas quebram em vez de empurrar a tabela */
+#tbl-enc{table-layout:fixed; width:100%; min-width:860px}
+#tbl-enc td,#tbl-enc th{padding:8px 9px; vertical-align:top; overflow-wrap:anywhere}
+#tbl-enc th{white-space:normal; letter-spacing:.04em; overflow-wrap:normal; word-break:keep-all}
+#tbl-enc td.r{font-size:11px}
+#tbl-enc tbody tr:hover{background:transparent}
+#tbl-enc td.enc-pi{
+  background:var(--surface-2); border-right:1px solid var(--hair); font-size:11.5px;
+}
+#tbl-enc td.enc-pi b{display:block; font-weight:600; line-height:1.3}
+#tbl-enc td.enc-pi small{
+  display:block; margin-top:4px; color:var(--muted);
+  font-family:"IBM Plex Mono",monospace; font-size:11px;
+}
+#tbl-enc td.enc-meio{white-space:nowrap; border-right:1px solid var(--hair-soft); font-size:12px}
+#tbl-enc td.just{white-space:pre-line; font-size:11.5px; line-height:1.45}
+#tbl-enc td.prazo{white-space:nowrap; font-size:11.5px}
+
 .chips{display:flex; flex-wrap:wrap; gap:7px; padding:14px 18px; border-bottom:1px solid var(--hair-soft)}
 .chip{
   border:1px solid var(--hair); background:var(--surface); border-radius:999px;
@@ -606,6 +626,21 @@ textarea{min-height:62px; resize:vertical}
       </div>
     </section>
 
+    <section class="sec" data-mod="encerramento">
+      <div class="sec-head">
+        <span class="eyebrow">Exercício 2026</span>
+        <h2>Encerramento do exercício</h2>
+        <span class="note" id="enc-count"></span>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <h3>Disponível e despesas a liquidar, por plano interno e meio</h3>
+          <span class="sub" id="enc-tot"></span>
+        </div>
+        <div class="tblwrap"><table id="tbl-enc"></table></div>
+      </div>
+    </section>
+
     <div class="foot">
       <span id="foot-gerente"></span>
       <span id="foot-ug"></span>
@@ -667,6 +702,7 @@ const MODULOS = [
   {id:"andamento",      nome:"Andamento"},
   {id:"atencao",        nome:"Atenção"},
   {id:"justificativas", nome:"Restos a pagar"},
+  {id:"encerramento",   nome:"Encerramento do exercício"},
 ];
 
 const S = {
@@ -1119,6 +1155,75 @@ function renderJustificativas() {
     : "Nenhum resto a pagar registrado na planilha.";
 }
 
+/* ───────────────────────────── painel: encerramento do exercício ───────────────────────────── */
+const COL_ENC = ["Plano interno","Meio","Disponível","Justificativa para manutenção",
+                 "Prazo para empenho","Despesas a liquidar","Justificativa"];
+
+/* tamanho de cada bloco de linhas que compartilham a mesma chave — vira o rowspan */
+function blocos(L, chave) {
+  const s = new Array(L.length).fill(0);
+  let i = 0;
+  while (i < L.length) {
+    let j = i;
+    while (j + 1 < L.length && chave(L[j + 1]) === chave(L[i])) j++;
+    s[i] = j - i + 1; i = j + 1;
+  }
+  return s;
+}
+
+function renderEncerramento() {
+  const L = S.encerramento || [];
+  const t = $("tbl-enc"); t.textContent = "";
+  if (!L.length) {
+    $("enc-count").textContent = "";
+    $("enc-tot").textContent = "aba ainda sem linhas";
+    return;
+  }
+
+  const cg = el("colgroup");
+  ["14%","14%","12%","20%","9.5%","12%","18.5%"].forEach(w => {
+    const c = el("col"); c.style.width = w; cg.append(c);
+  });
+  t.append(cg);
+
+  const thead = el("thead"), tr = el("tr");
+  COL_ENC.forEach((c,i) => tr.append(el("th", (i === 2 || i === 5) ? "r" : null, c)));
+  thead.append(tr); t.append(thead);
+
+  const sPi  = blocos(L, r => r.pi);
+  const sUgr = blocos(L, r => r.pi + " §§ " + r.ugr);
+
+  const tb = el("tbody");
+  L.forEach((r,i) => {
+    const linha = el("tr");
+    if (sPi[i]) {
+      const td = el("td","enc-pi"); td.rowSpan = sPi[i];
+      td.append(Object.assign(el("b"), {textContent:r.pi}));
+      if (r.piTotal) td.append(Object.assign(el("small"), {textContent:celulaValor(r.piTotal)}));
+      linha.append(td);
+    }
+    if (sUgr[i]) {
+      const td = el("td","enc-meio"); td.rowSpan = sUgr[i];
+      td.textContent = r.ugr || "—";
+      linha.append(td);
+    }
+    linha.append(el("td","r num", celulaValor(r.disponivel)));
+    linha.append(el("td","just", r.just1 || "—"));
+    linha.append(el("td","prazo", r.prazo || "—"));
+    linha.append(el("td","r num", celulaValor(r.aliquidar)));
+    linha.append(el("td","just", r.just2 || "—"));
+    tb.append(linha);
+  });
+  t.append(tb);
+
+  const soma = f => L.reduce((s,r) => s + (ehValor(r[f]) ? num(r[f]) : 0), 0);
+  const nPi = new Set(L.map(r => r.pi)).size;
+  $("enc-count").textContent =
+    `${nPi} ${nPi === 1 ? "plano interno" : "planos internos"} · ${L.length} linhas`;
+  $("enc-tot").textContent =
+    `Disponível ${brl0(soma("disponivel"))} · a liquidar ${brl0(soma("aliquidar"))}`;
+}
+
 /* ───────────────────────────── painel: alertas ───────────────────────────── */
 function renderAlerts(D) {
   const host = $("alerts"); host.textContent = "";
@@ -1450,7 +1555,7 @@ function render() {
 
     renderTiles(D); renderConsolidado(D); renderSemMetas(D); renderAlerts(D);
     renderChartPi(D); renderDestinacao(D); renderAndamento(D);
-    renderDestaque(); renderRestos(); renderJustificativas();
+    renderDestaque(); renderRestos(); renderJustificativas(); renderEncerramento();
     renderChips(D); renderTable(D); renderModNav();
 
     $("view-painel").hidden = false;
@@ -1461,7 +1566,8 @@ function render() {
 /* ───────────────────────────── leitura da planilha ───────────────────────────── */
 const PUB = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ71i6iSfEc8aNLtdx-ldBkvogqgQYBdbf03Scuy3mjOd2k6_DbMkMD8ZFBBWh6nTu1pqDz787P9nTt/pub?single=true&output=csv&gid=";
 const GID = {creditos:"29490223", metas:"720560572",
-             destaque:"1743988624", restos:"155307403"};
+             destaque:"1743988624", restos:"155307403",
+             encerramento:"493806067"};
 
 /* CSV com campos entre aspas e quebras de linha dentro do campo */
 function parseCSV(t) {
@@ -1587,6 +1693,47 @@ function lerDestaque(linhas) {
   return pis;
 }
 
+/* texto de célula preservando as quebras de linha que o usuário digitou */
+const textoML = v => String(v || "").replace(/\r/g, "")
+                       .replace(/[ \t]+/g, " ").replace(/ ?\n ?/g, "\n").trim();
+
+/* valor em dinheiro? "26.057,06", "R$ 16.000,00", "0" sim; "13nov.2026", "-" não */
+const ehValor = v => /^\s*(R\$)?\s*\d[\d.\s]*(,\d{1,2})?\s*$/.test(String(v || ""));
+const celulaValor = v => !tidy(v) || tidy(v) === "-" ? "—" : (ehValor(v) ? brl(num(v)) : tidy(v));
+
+/* Quadro de encerramento do exercício.
+   A planilha usa células mescladas na vertical: a descrição do PI e o meio só
+   aparecem na primeira linha do bloco e vêm vazios nas seguintes. Aqui a linha
+   herda o último valor preenchido, e o painel remonta a mescla como rowspan. */
+function lerEncerramento(linhas) {
+  const h = linhas.findIndex(r => /DESCRI[ÇC][ÃA]O\s*PI/i.test(tidy(r[0])) && /UGR/i.test(tidy(r[1])));
+  const out = [];
+  if (h < 0) return out;
+  let pi = "", piTotal = "", ugr = "";
+  for (let i = h + 1; i < linhas.length; i++) {
+    const r = linhas[i];
+    if (!r || r.every(c => !tidy(c))) continue;
+
+    const c0 = tidy(r[0]);
+    if (c0) {
+      /* "DESPESA DE FUNCIONAMENTO (17.272,02)" → nome + total do PI */
+      const m = c0.match(/^(.*?)\s*\(\s*([^)]*)\s*\)\s*$/);
+      pi = tidy(m ? m[1] : c0);
+      piTotal = m ? tidy(m[2]) : "";
+      ugr = "";                       // PI novo recomeça a mescla do meio
+    }
+    const c1 = tidy(r[1]);
+    if (c1) ugr = c1;
+
+    out.push({
+      pi, piTotal, ugr,
+      disponivel: tidy(r[2]), just1: textoML(r[3]), prazo: tidy(r[4]),
+      aliquidar: tidy(r[5]), just2: textoML(r[6]),
+    });
+  }
+  return out;
+}
+
 /* Detalhamento dos restos a pagar, nota a nota */
 function lerRestos(linhas) {
   const h = linhas.findIndex(r => /^UGR$/i.test(tidy(r[0])) && /^PI$/i.test(tidy(r[1])));
@@ -1681,13 +1828,15 @@ async function carregar() {
     if (!r.ok) throw new Error("HTTP " + r.status);
     return parseCSV(await r.text());
   };
-  const [cred, met, dest, res] = await Promise.all(
-    [busca(GID.creditos), busca(GID.metas), busca(GID.destaque), busca(GID.restos)]);
+  const [cred, met, dest, res, enc] = await Promise.all(
+    [busca(GID.creditos), busca(GID.metas), busca(GID.destaque), busca(GID.restos),
+     busca(GID.encerramento)]);
   S.pis = lerCreditos(cred);
   S.demandas = lerMetas(met, S.pis);
   S.destaque = lerDestaque(dest);
   S.rp = [];                     // classes de restos a pagar não vêm mais do destaque
   S.restos = lerRestos(res);
+  S.encerramento = lerEncerramento(enc);
   const p0 = S.pis[0] || {};
   const alvos = lerAlvos(cred) || {};
   S.config = Object.assign({}, CONFIG, {
