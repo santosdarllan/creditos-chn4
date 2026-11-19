@@ -208,7 +208,8 @@ tr.stale td{opacity:.6}
    lateral, e as justificativas longas quebram em vez de empurrar a tabela */
 #tbl-enc{table-layout:fixed; width:100%; min-width:860px}
 #tbl-enc td,#tbl-enc th{padding:8px 9px; vertical-align:top; overflow-wrap:anywhere}
-#tbl-enc th{white-space:normal; letter-spacing:.04em; overflow-wrap:normal; word-break:keep-all}
+#tbl-enc th{white-space:normal; font-size:10.5px; letter-spacing:.02em;
+            overflow-wrap:normal; word-break:keep-all}
 #tbl-enc td.r{font-size:11px}
 #tbl-enc tbody tr:hover{background:transparent}
 /* três níveis de separação: linha, bloco de meio e bloco de plano interno */
@@ -227,8 +228,59 @@ tr.stale td{opacity:.6}
   font-family:"IBM Plex Mono",monospace; font-size:11px;
 }
 #tbl-enc td.enc-meio{white-space:nowrap; border-right:1px solid var(--hair); font-size:12px}
+#tbl-enc td.enc-nd{text-align:center; font-family:"IBM Plex Mono",monospace; font-size:11px}
 #tbl-enc td.just{white-space:pre-line; font-size:11.5px; line-height:1.45}
 #tbl-enc td.prazo{white-space:nowrap; font-size:11.5px}
+
+/* ───────────────────────────── impressão ─────────────────────────────
+   Ctrl+P imprime o módulo que está na tela. Em paisagem, sem a navegação
+   lateral e sem a rolagem horizontal das tabelas, que era o que cortava o
+   quadro de encerramento no papel. */
+@media print {
+  @page{size:A4 landscape; margin:9mm 8mm 11mm}
+  html,body{background:#fff}
+  .wrap{max-width:none; padding:0}
+  .modnav,#boot,.chips,.tabs,.btn{display:none !important}
+  .topbar-right .stamp{font-size:9px; line-height:1.3}
+  .layout,.layout.com-nav{display:block !important}
+  .layout-main{padding:0 !important}
+
+  .topbar{position:static; backdrop-filter:none; border-bottom:1px solid #9bbfb1}
+  .topbar-in{padding:0 0 6px}
+  .crest img{width:34px; height:auto}
+  h1{font-size:15px}
+
+  .sec{margin-top:0 !important; break-before:avoid}
+  .sec-head{margin-bottom:6px}
+  .sec-head h2{font-size:15px}
+  .card{box-shadow:none !important; border:1px solid #9bbfb1; break-inside:auto}
+  .card-h{padding:7px 9px}
+  .card-h h3{font-size:12px}
+
+  /* o que cortava: a caixa de rolagem e a largura mínima das tabelas */
+  .tblwrap{overflow:visible !important}
+  table{min-width:0 !important; width:100% !important}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid}
+  th{position:static !important; background:#eef7f2 !important;
+     -webkit-print-color-adjust:exact; print-color-adjust:exact}
+
+  #tbl-enc{font-size:8.5px}
+  #tbl-enc td,#tbl-enc th{padding:4px 5px}
+  #tbl-enc td.just{font-size:8px; line-height:1.35}
+  #tbl-enc td.enc-pi{font-size:8.5px; background:#f4faf7 !important;
+     -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  #tbl-enc td.enc-pi small{font-size:8px; margin-top:2px}
+  #tbl-enc td.enc-meio{font-size:8.5px}
+  /* as separações continuam visíveis mesmo sem impressão de fundos */
+  #tbl-enc tr.enc-pi-novo > td{border-top:1.6pt solid #3e6459 !important}
+  #tbl-enc tr.enc-meio-novo > td{border-top:.6pt solid #8fb6a7 !important}
+  #tbl-enc td.enc-pi{border-right:1.6pt solid #3e6459 !important}
+
+  .foot{margin-top:10px; padding-top:6px; font-size:9px}
+  .hb-bar i,.b-emp,.b-liq,.b-pag{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
 
 .chips{display:flex; flex-wrap:wrap; gap:7px; padding:14px 18px; border-bottom:1px solid var(--hair-soft)}
 .chip{
@@ -641,7 +693,7 @@ textarea{min-height:62px; resize:vertical}
       </div>
       <div class="card">
         <div class="card-h">
-          <h3>Disponível e despesas a liquidar, por plano interno e meio</h3>
+          <h3>Saldo disponível por plano interno, meio e natureza de despesa</h3>
           <span class="sub" id="enc-tot"></span>
         </div>
         <div class="tblwrap"><table id="tbl-enc"></table></div>
@@ -1163,9 +1215,6 @@ function renderJustificativas() {
 }
 
 /* ───────────────────────────── painel: encerramento do exercício ───────────────────────────── */
-const COL_ENC = ["Plano interno","Meio","Disponível","Justificativa para manutenção",
-                 "Prazo para empenho","Despesas a liquidar","Justificativa"];
-
 /* tamanho de cada bloco de linhas que compartilham a mesma chave — vira o rowspan */
 function blocos(L, chave) {
   const s = new Array(L.length).fill(0);
@@ -1178,59 +1227,81 @@ function blocos(L, chave) {
   return s;
 }
 
+const CLASSE_ENC = {pi:"enc-pi", ugr:"enc-meio", nd:"enc-nd",
+                    valor:"r num", objeto:"just", situacao:"just", prazo:"prazo"};
+
 function renderEncerramento() {
-  const L = S.encerramento || [];
+  const E = S.encerramento || {campos:[], linhas:[]};
+  const campos = E.campos || [], L = E.linhas || [];
   const t = $("tbl-enc"); t.textContent = "";
-  if (!L.length) {
+  if (!campos.length || !L.length) {
     $("enc-count").textContent = "";
-    $("enc-tot").textContent = "aba ainda sem linhas";
+    $("enc-tot").textContent = campos.length
+      ? "aba ainda sem linhas"
+      : "não reconheci o cabeçalho da aba de encerramento";
     return;
   }
 
+  /* larguras proporcionais só entre as colunas que a planilha trouxe */
+  const total = campos.reduce((s,c) => s + c.peso, 0);
   const cg = el("colgroup");
-  ["14%","14%","12%","20%","9.5%","12%","18.5%"].forEach(w => {
-    const c = el("col"); c.style.width = w; cg.append(c);
+  campos.forEach(c => {
+    const col = el("col"); col.style.width = (100 * c.peso / total).toFixed(2) + "%"; cg.append(col);
   });
   t.append(cg);
 
   const thead = el("thead"), tr = el("tr");
-  COL_ENC.forEach((c,i) => tr.append(el("th", (i === 2 || i === 5) ? "r" : null, c)));
+  campos.forEach(c => tr.append(el("th", c.k === "valor" ? "r" : null, c.titulo)));
   thead.append(tr); t.append(thead);
 
-  const sPi  = blocos(L, r => r.pi);
-  const sUgr = blocos(L, r => r.pi + " §§ " + r.ugr);
+  const temPi  = campos.some(c => c.k === "pi");
+  const temUgr = campos.some(c => c.k === "ugr");
+  const sPi  = temPi  ? blocos(L, r => r.pi) : null;
+  const sUgr = temUgr ? blocos(L, r => (r.pi || "") + " §§ " + (r.ugr || "")) : null;
+
+  /* total de cada plano interno: a planilha não declara mais, então é a soma das
+     linhas do bloco */
+  const somaBloco = (ini, n) => {
+    let s = 0;
+    for (let j = ini; j < ini + n; j++) if (ehValor(L[j].valor)) s += num(L[j].valor);
+    return s;
+  };
 
   const tb = el("tbody");
   L.forEach((r,i) => {
     const linha = el("tr");
-    if (sPi[i]) linha.className = "enc-pi-novo";
-    else if (sUgr[i]) linha.className = "enc-meio-novo";
-    if (sPi[i]) {
-      const td = el("td","enc-pi"); td.rowSpan = sPi[i];
-      td.append(Object.assign(el("b"), {textContent:r.pi}));
-      if (r.piTotal) td.append(Object.assign(el("small"), {textContent:celulaValor(r.piTotal)}));
-      linha.append(td);
+    if (sPi && sPi[i]) linha.className = "enc-pi-novo";
+    else if (sUgr && sUgr[i]) linha.className = "enc-meio-novo";
+
+    for (const c of campos) {
+      if (c.k === "pi") {
+        if (!sPi[i]) continue;
+        const td = el("td", CLASSE_ENC.pi); td.rowSpan = sPi[i];
+        td.append(Object.assign(el("b"), {textContent:r.pi || "—"}));
+        const sb = somaBloco(i, sPi[i]);
+        if (sb) td.append(Object.assign(el("small"), {textContent:brl(sb)}));
+        linha.append(td);
+      } else if (c.k === "ugr") {
+        if (!sUgr[i]) continue;
+        const td = el("td", CLASSE_ENC.ugr); td.rowSpan = sUgr[i];
+        td.textContent = r.ugr || "—";
+        linha.append(td);
+      } else if (c.k === "valor") {
+        linha.append(el("td", CLASSE_ENC.valor, celulaValor(r.valor)));
+      } else {
+        linha.append(el("td", CLASSE_ENC[c.k] || null, r[c.k] || "—"));
+      }
     }
-    if (sUgr[i]) {
-      const td = el("td","enc-meio"); td.rowSpan = sUgr[i];
-      td.textContent = r.ugr || "—";
-      linha.append(td);
-    }
-    linha.append(el("td","r num", celulaValor(r.disponivel)));
-    linha.append(el("td","just", r.just1 || "—"));
-    linha.append(el("td","prazo", r.prazo || "—"));
-    linha.append(el("td","r num", celulaValor(r.aliquidar)));
-    linha.append(el("td","just", r.just2 || "—"));
     tb.append(linha);
   });
   t.append(tb);
 
-  const soma = f => L.reduce((s,r) => s + (ehValor(r[f]) ? num(r[f]) : 0), 0);
-  const nPi = new Set(L.map(r => r.pi)).size;
+  const soma = L.reduce((s,r) => s + (ehValor(r.valor) ? num(r.valor) : 0), 0);
+  const nPi = new Set(L.map(r => r.pi).filter(Boolean)).size;
+  const nMeios = new Set(L.map(r => r.ugr).filter(Boolean)).size;
   $("enc-count").textContent =
-    `${nPi} ${nPi === 1 ? "plano interno" : "planos internos"} · ${L.length} linhas`;
-  $("enc-tot").textContent =
-    `Disponível ${brl0(soma("disponivel"))} · a liquidar ${brl0(soma("aliquidar"))}`;
+    `${nPi} ${nPi === 1 ? "plano interno" : "planos internos"} · ${nMeios} ${nMeios === 1 ? "meio" : "meios"} · ${L.length} linhas`;
+  $("enc-tot").textContent = `Saldo disponível ${brl0(soma)}`;
 }
 
 /* ───────────────────────────── painel: alertas ───────────────────────────── */
@@ -1714,33 +1785,66 @@ const celulaValor = v => !tidy(v) || tidy(v) === "-" ? "—" : (ehValor(v) ? brl
    A planilha usa células mescladas na vertical: a descrição do PI e o meio só
    aparecem na primeira linha do bloco e vêm vazios nas seguintes. Aqui a linha
    herda o último valor preenchido, e o painel remonta a mescla como rowspan. */
+/* As colunas da aba de encerramento são localizadas pelo texto do cabeçalho, não
+   pela posição: a aba já foi remontada uma vez e pode ser de novo. Campo que não
+   existir na planilha simplesmente não vira coluna no painel. */
+const CAMPOS_ENC = [
+  {k:"pi",       re:/^(pi\b|descri)/,         rotulo:"Plano interno",       peso:12},
+  {k:"ugr",      re:/^ugr?\b|^ug\s|respons/,  rotulo:"Meio",                peso:12},
+  {k:"nd",       re:/natureza/,               rotulo:"Natureza de despesa", peso:9},
+  {k:"valor",    re:/saldo|dispon/,           rotulo:"Saldo disponível",    peso:10.5},
+  {k:"objeto",   re:/resumo|objeto/,          rotulo:"Objetos",             peso:29},
+  {k:"situacao", re:/situa|justificativa/,    rotulo:"Situação",            peso:18.5},
+  {k:"prazo",    re:/previs|prazo/,           rotulo:"Previsão de empenho", peso:9},
+];
+const MESCLADOS = ["pi","ugr"];                      // colunas que a planilha mescla
+const MULTILINHA = ["objeto","situacao"];            // texto digitado em várias linhas
+
+const semAcento = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "")
+                         .toLowerCase().replace(/\s+/g, " ").trim();
+
 function lerEncerramento(linhas) {
-  const h = linhas.findIndex(r => /DESCRI[ÇC][ÃA]O\s*PI/i.test(tidy(r[0])) && /UGR/i.test(tidy(r[1])));
+  let h = -1, col = null, cab = null;
+  for (let i = 0; i < Math.min(linhas.length, 40); i++) {
+    const m = {}; let n = 0;
+    (linhas[i] || []).forEach((c, j) => {
+      const t = semAcento(c);
+      if (!t) return;
+      for (const campo of CAMPOS_ENC) {
+        if (m[campo.k] === undefined && campo.re.test(t)) { m[campo.k] = j; n++; break; }
+      }
+    });
+    if (n >= 4 && m.pi !== undefined && m.valor !== undefined) { h = i; col = m; cab = linhas[i]; break; }
+  }
+  if (h < 0) return {campos:[], linhas:[]};
+
+  /* só as colunas que a planilha tem, na ordem de CAMPOS_ENC; o título vem da
+     própria planilha, sem o "(Ex: ...)" que é instrução de preenchimento */
+  const campos = CAMPOS_ENC.filter(c => col[c.k] !== undefined).map(c => ({
+    ...c,
+    titulo: tidy(String(cab[col[c.k]] || "").replace(/\s*\(\s*ex[:.][^)]*\)?\s*$/i, "")) || c.rotulo,
+  }));
+
   const out = [];
-  if (h < 0) return out;
-  let pi = "", piTotal = "", ugr = "";
+  const herdado = {};
   for (let i = h + 1; i < linhas.length; i++) {
     const r = linhas[i];
     if (!r || r.every(c => !tidy(c))) continue;
+    if (/^total/i.test(tidy(r[col.pi]))) break;
 
-    const c0 = tidy(r[0]);
-    if (c0) {
-      /* "DESPESA DE FUNCIONAMENTO (17.272,02)" → nome + total do PI */
-      const m = c0.match(/^(.*?)\s*\(\s*([^)]*)\s*\)\s*$/);
-      pi = tidy(m ? m[1] : c0);
-      piTotal = m ? tidy(m[2]) : "";
-      ugr = "";                       // PI novo recomeça a mescla do meio
+    const linha = {};
+    for (const c of campos) {
+      const bruto = r[col[c.k]];
+      linha[c.k] = MULTILINHA.includes(c.k) ? textoML(bruto) : tidy(bruto);
     }
-    const c1 = tidy(r[1]);
-    if (c1) ugr = c1;
+    /* células mescladas: herda o último valor preenchido; PI novo zera o meio */
+    if (linha.pi) { herdado.pi = linha.pi; herdado.ugr = ""; }
+    if (linha.ugr) herdado.ugr = linha.ugr;
+    for (const k of MESCLADOS) if (campos.some(c => c.k === k)) linha[k] = herdado[k] || "";
 
-    out.push({
-      pi, piTotal, ugr,
-      disponivel: tidy(r[2]), just1: textoML(r[3]), prazo: tidy(r[4]),
-      aliquidar: tidy(r[5]), just2: textoML(r[6]),
-    });
+    out.push(linha);
   }
-  return out;
+  return {campos, linhas:out};
 }
 
 /* Detalhamento dos restos a pagar, nota a nota */
